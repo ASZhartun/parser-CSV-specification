@@ -26,6 +26,41 @@ public class ParserCSV {
      * </ul>
      */
     private static final String REGEX_POSITION_NAME_WITH_LENGTH = "[0-9]{1,2}[ ]+[S,A,А][0-9]{3}[ ]+СТБ[ ]?1704-2012,[ ]?[L][=][0-9]+";
+    /**
+     * <p>Примеры поля, которое соответствует regex'у:</p>
+     * <ul>
+     *      <li><pre>4С %%C5S500-100/%%C5S500-100 65x145</pre></li>
+     *      <li><pre>4С%%C5S500-100/%%C5S500-100  65x145</pre></li>
+     *      <li><pre>1С %%12S500-200/%%8S500-600 105x145</pre></li>
+     *      <li><pre>1С %%12S240-200/%%8S240-600 105x145</pre></li>
+     *      <li><pre>2С%%12S500-200/%%12S500-200 125x130</pre></li>
+     * </ul>
+     */
+    private static final String REGEX_NAME_OF_REBAR_MESH_BY_GOST = "[0-9][C,С][р]?[ ]?%%[C,С]?[0-9]+S[2,5][4,0]0-([0-9]{3}\\([0-9]{3}\\)|[0-9]{2,3})\\/%%[C,С]?[0-9]+S[2,5][4,0]0-([0-9]{3}\\([0-9]{3}\\)|[0-9]{2,3})[ ]+?[0-9]{2,3}[x,х][0-9]{2,3}";
+    /**
+     * <ul>
+     *     <li>[C5S500-100,C5S500-100]</li>
+     *     <li>[12S500-200,8S500-600]</li>
+     *     <li>[12S500-200,12S500-200]</li>
+     * </ul>
+     */
+    private static final String REGEX_DIAMETER_AND_STEP_BARS_OF_REBAR_MESH = "[C,С]?[0-9]+S[2,5][4,0]0-([0-9]{3}\\([0-9]{3}\\)|[0-9]{2,3})";
+    /**
+     * <ul>
+     *     <li>65x145</li>
+     *     <li>105x145</li>
+     *     <li>125x130</li>
+     * </ul>
+     */
+    private static final String REGEX_LENGTH_OF_BARS_OF_REBAR_MESH = "[0-9]{2,3}[X,Х,x,х][0-9]{2,3}";
+    /**
+     * <ul>
+     *     <li>[65,145]</li>
+     *     <li>[105,145]</li>
+     *     <li>[125,130]</li>
+     * </ul>
+     */
+    private static final String REGEX_FOR_UNIT_LENGTH_OF_BARS_OF_REBAR_MESH = "[0-9]{2,3}";
 
     public ParserCSV() {
 
@@ -197,7 +232,7 @@ public class ParserCSV {
         for (int i = 1; i < downEdgeOfPositions; i++) {
             final Line line = lines.get(i);
             if (line.getDescription().equals("ГОСТ 23279-2012")) {
-//                parseNetBar(line);
+//                parseRebarMesh(line);
             } else if (isPosition(line.getName())) {
                 final PositionBar temp = parsePositionBar(line);
                 positionBars.add(temp);
