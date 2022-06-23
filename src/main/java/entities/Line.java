@@ -68,4 +68,14 @@ public class Line {
     public void setNote(String note) {
         this.note = note;
     }
+
+    @Override
+    public String toString() {
+        return getPos() + '\t'
+                + getDescription() + '\t'
+                + getName() + '\t'
+                + getQuantity() + '\t'
+                + getWeight() + '\t'
+                + getNote() + '\n';
+    }
 }

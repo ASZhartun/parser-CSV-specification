@@ -3,6 +3,7 @@ import config.ServiceConfiguration;
 import dao.ReaderCSV.ReaderCSV;
 import dao.WriterCSV.WriterCSV;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import service.Calculator;
 import service.Operator;
 import service.ParserCSV;
 
@@ -16,13 +17,14 @@ public class Main {
         context.register(ServiceConfiguration.class);
         context.refresh();
         ReaderCSV readerCSV = (ReaderCSV) context.getBean("reader");
-        readerCSV.setPathCSV("D:\\portfolio\\parser-CSV-specification\\src\\main\\resources\\table.txt");
-        readerCSV.setPathFolder("D:\\portfolio\\parser-CSV-specification\\src\\main\\resources\\table.txt");
+        readerCSV.setPathCSV("E:\\projects\\parser-CSV-specification-main\\parser-CSV-specification-main\\src\\main\\resources\\table.csv");
+        readerCSV.setPathFolder("E:\\projects\\parser-CSV-specification-main\\parser-CSV-specification-main\\src\\main\\resources\\table.csv");
         readerCSV.readCSV();
         ParserCSV parserCSV = (ParserCSV) context.getBean("parserCSVSpecificationTable");
         parserCSV.parseTable(readerCSV.getContent());
-
-
+        Calculator calculator = (Calculator) context.getBean("calculator");
+        calculator.setStructures(parserCSV.getStructures());
+        calculator.calculate();
 
     }
 }

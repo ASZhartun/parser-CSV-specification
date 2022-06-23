@@ -23,7 +23,7 @@ public class ReaderCSV {
 
     public void readCSV() {
         try {
-            final FileReader fileReader = new FileReader(pathCSV, StandardCharsets.UTF_8);
+            final FileReader fileReader = new FileReader(pathCSV);
             final BufferedReader bufferedReader = new BufferedReader(fileReader);
             String temp;
             while ((temp = bufferedReader.readLine()) != null) {

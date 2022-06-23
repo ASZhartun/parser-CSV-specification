@@ -5,6 +5,7 @@ import dao.WriterCSV.WriterCSV;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
+import service.Calculator;
 import service.Operator;
 import service.ParserCSV;
 
@@ -32,5 +33,11 @@ public class ServiceConfiguration {
     @Scope("singleton")
     public ParserCSV getParserCSV() {
         return new ParserCSV();
+    }
+
+    @Bean("calculator")
+    @Scope("singleton")
+    public Calculator getCalculator() {
+        return new Calculator();
     }
 }
