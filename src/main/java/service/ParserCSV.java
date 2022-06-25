@@ -12,6 +12,18 @@ import java.util.regex.Pattern;
 
 
 public class ParserCSV {
+    public static void main(String[] args) {
+        int c = '0';
+        int x = '9';
+        System.out.println(c + " " + x);
+        int z = 'A';
+        int v = 'Z';
+        System.out.println(z + " " + v);
+        if (x > 56) {
+            System.out.println("success");
+        }
+    }
+
     /**
      * Список, содержащий все структуры, которые описаны в общей таблице.
      */
@@ -61,6 +73,15 @@ public class ParserCSV {
      * </ul>
      */
     private static final String REGEX_FOR_UNIT_LENGTH_OF_BARS_OF_REBAR_MESH = "[0-9]{2,3}";
+
+    /**
+     * Из "C5S500-100" получает 3 группы: "C5", "S500","100"
+     */
+    private static final String REGEX_FOR_INFO_ABOUT_WIRE_OF_REBAR_MESH = "([A-Za-zА-Яа-я]{1,2}[0-9])(S[0-9]{3})-([0-9]{2,3})";
+    /**
+     * Из 12S500-200 получает 3 группы: "12", "S500", "200"
+     */
+    private static final String REGEX_FOR_INFO_ABOUT_BAR_OF_REBAR_MESH = "([0-9]{1,2})(S[0-9]{3})-([0-9]{1,3})";
 
     public ParserCSV() {
 
@@ -232,13 +253,147 @@ public class ParserCSV {
         for (int i = 1; i < downEdgeOfPositions; i++) {
             final Line line = lines.get(i);
             if (line.getDescription().equals("ГОСТ 23279-2012")) {
-//                parseRebarMesh(line);
+                positionBars.addAll(parseRebarMesh(line));
             } else if (isPosition(line.getName())) {
                 final PositionBar temp = parsePositionBar(line);
                 positionBars.add(temp);
             }
         }
         return positionBars;
+    }
+
+    /**
+     * Парсит арматурной сетку, возвращает список со стержнями.
+     * @param line строка с арматурной сеткой.
+     * @return список со стержнями.
+     */
+    private ArrayList<PositionBar> parseRebarMesh(Line line) {
+        int meshQuantity = extractIntegerFrom(line.getQuantity());
+        final String name = line.getName();
+        final ArrayList<PositionBar> twoPositionsBars = getLengthOfTwoBars(name);
+        getSignatureOfTwoBars(name, twoPositionsBars);
+        return twoPositionsBars;
+    }
+
+    /**
+     * Получает сигнатуру стержня из строки с сигнатурой арматурной сетки, обрабатывает и вносит данные в список стержней установленной длины.
+     * @param name строка с сигнатурой арматурной сетки.
+     * @param twoPositionsBars список стержней установленной длины.
+     */
+    private void getSignatureOfTwoBars(String name, ArrayList<PositionBar> twoPositionsBars) {
+        final Pattern compile = Pattern.compile(REGEX_DIAMETER_AND_STEP_BARS_OF_REBAR_MESH);
+        final Matcher matcher = compile.matcher(name);
+        int i = matcher.groupCount();
+        for (int j = 0; j < i; j++) {
+            parseSignatureOfUnitBarAndCreatePositionBarFrom(matcher.group(j), twoPositionsBars, j);
+        }
+    }
+
+    /**
+     * Парсит сигнатуру стержней арматурной сетки. Получает диаметр, тип, количество стержней. Вносит данные в объекты списка PositionBar.
+     * @param group строка с информацией о сигнатуре стержней арматурной сетки.
+     * @param twoPositionsBars список с объектами стержней установленной длины.
+     * @param numberOfBar порядкой номер стержня на обработке.
+     */
+    private void parseSignatureOfUnitBarAndCreatePositionBarFrom(String group, ArrayList<PositionBar> twoPositionsBars, int numberOfBar) {
+        final char c = group.charAt(0);
+        if (c > 57) {
+            //секция для распаршивания ситуации, когда применяется проволока, а не стержень
+            final Pattern compile = Pattern.compile(REGEX_FOR_INFO_ABOUT_WIRE_OF_REBAR_MESH);
+            final Matcher matcher = compile.matcher(group);
+            final int step = extractIntegerFrom(matcher.group(2));
+            int quantityOfCurrentBar = getQuantityOfCurrentBarOfRebarMesh(step, numberOfBar, twoPositionsBars);
+            String typeBar = matcher.group(1);
+            int diameter = extractIntegerFrom(extractDiameterFromWire(matcher.group(0)));
+            final PositionBar positionBar;
+            if (numberOfBar == 0) {
+                positionBar = twoPositionsBars.get(0);
+            } else {
+                positionBar = twoPositionsBars.get(1);
+            }
+            positionBar.setDiameter(diameter);
+            positionBar.setRebarType(typeBar);
+            positionBar.setQuantity(quantityOfCurrentBar);
+            //секция для распаршивания ситуации, когда применяется проволока, а не стержень
+        } else {
+
+        }
+    }
+
+    /**
+     * Возвращает диаметр стержня проволоки.
+     * @param group строка с диаметром проволоки.
+     * @return инт диаметр проволоки
+     */
+    private String extractDiameterFromWire(String group) {
+        if (group.charAt(1) > 57) {
+            return "" + group.charAt(2);
+        }
+        return "" + group.charAt(1);
+    }
+
+    /**
+     * Получает количество текущих стержней в арматурной сетке по шагу и длине другого стержня.
+     * @param step шаг стержней
+     * @param numberOfBar порядкой номер стержня на обработке
+     * @param twoPositionsBars список позиций с установленной длиной.
+     * @return количество текущих стержней
+     */
+    private int getQuantityOfCurrentBarOfRebarMesh(int step, int numberOfBar, ArrayList<PositionBar> twoPositionsBars) {
+        int quantityOfCurrentBar;
+        if (numberOfBar == 0) {
+            quantityOfCurrentBar = twoPositionsBars.get(1).getLength() / step;
+        } else {
+            quantityOfCurrentBar = twoPositionsBars.get(0).getLength() / step;
+        }
+        return quantityOfCurrentBar;
+    }
+
+
+    /**
+     * Вычленяет описание длин стержней арматурной сетки. Передает строку обработчику и получает список из двух объектов, представляющих два стержня с установленными длинами. Возвращает этот список.
+     *
+     * @param name описание длин стержней арматурной сетки
+     * @return список из двух объектов стержней с установленными длинами.
+     */
+    private ArrayList<PositionBar> getLengthOfTwoBars(String name) {
+        final Pattern compile = Pattern.compile(REGEX_LENGTH_OF_BARS_OF_REBAR_MESH);
+        final Matcher matcher = compile.matcher(name);
+        final ArrayList<PositionBar> positionBars = new ArrayList<>();
+        if (matcher.find()) {
+            final String group = matcher.group();
+            return getTwoPositionBarsWithSpecifiedLengthFrom(group);
+        }
+        return positionBars;
+    }
+
+    /**
+     * Парсит из длины вида "65х140" две длины "65" и "140"(напр.), конвертирует в инт, переводит в мм, создает объект, устанавливает длину, запихивает объект в список и возвращает его.
+     *
+     * @param group строка, содержащая описание длин двух стержней арматурной сетки.
+     * @return список двух стержневых позиций (объект стержня) с установленными длинами.
+     */
+    private ArrayList<PositionBar> getTwoPositionBarsWithSpecifiedLengthFrom(String group) {
+        final Pattern compile = Pattern.compile(REGEX_FOR_UNIT_LENGTH_OF_BARS_OF_REBAR_MESH);
+        final Matcher matcher = compile.matcher(group);
+        final ArrayList<PositionBar> positionBars = new ArrayList<>();
+        int i = matcher.groupCount();
+        while (i > 0) {
+            final PositionBar temp = new PositionBar();
+            temp.setLength(extractIntegerFrom(matcher.group()) * 10); //cm -> mm
+            positionBars.add(temp);
+            i--;
+        }
+        return positionBars;
+    }
+
+    private int extractIntegerFrom(String quantity) {
+        try {
+            return Integer.parseInt(quantity);
+        } catch (NumberFormatException e) {
+            System.out.println("Зафакапил конвертацию из стринги в интегер, лоч");
+        }
+        return 0;
     }
 
     private PositionBar parsePositionBar(Line line) {
