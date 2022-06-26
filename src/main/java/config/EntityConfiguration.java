@@ -1,9 +1,6 @@
 package config;
 
-import entities.BlockTable;
-import entities.Line;
-import entities.PositionBar;
-import entities.Structure;
+import entities.*;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Scope;
 
@@ -31,6 +28,12 @@ public class EntityConfiguration {
     @Scope("prototype")
     public BlockTable getBlockTable() {
         return new BlockTable();
+    }
+
+    @Bean("rebarMesh")
+    @Scope("prototype")
+    public RebarMesh getRebarMesh() {
+        return new RebarMesh();
     }
 
 }
