@@ -14,7 +14,7 @@ public class RebarMeshParser {
      * Парсит и создает объект арматурной сетки, состоящей из двух объектов PositionBar.
      *
      * @param signature сигнатура сетки
-     * @param quantity  количество сеток по чертежу
+     * @param cellWithQuantity  количество сеток по чертежу
      * @return объект арматурной сетки
      */
     public RebarMesh build(String signature, String cellWithQuantity) {
