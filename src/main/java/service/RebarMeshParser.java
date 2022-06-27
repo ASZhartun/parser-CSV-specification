@@ -7,16 +7,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class RebarMeshParser {
-    public static void main(String[] args) {
-
-//        final RebarMeshParser rebarMeshParser = new RebarMeshParser();
-//        final RebarMesh build = rebarMeshParser.build("1С %%C12S500-200(300)/%%C8S500-600(500) 105x145 50/40", 4);
-        String sample = "1С %%C12S500-200(300)/%%C8S500-600(500) 105x145 50/40";
-        final Pattern compile = Pattern.compile(REGEX_SIGNATURE_REBAR_MESH);
-        final Matcher matcher = compile.matcher(sample);
-        System.out.println(matcher.matches());
-
-    }
 
     private String content;
 
@@ -27,7 +17,8 @@ public class RebarMeshParser {
      * @param quantity  количество сеток по чертежу
      * @return объект арматурной сетки
      */
-    public RebarMesh build(String signature, int quantity) {
+    public RebarMesh build(String signature, String cellWithQuantity) {
+        int quantity = extractIntegerFrom(cellWithQuantity);
         if (rebarMeshWithOutputsByDefault(signature)) {
             signature = signature.concat("25+25/25");
         }
