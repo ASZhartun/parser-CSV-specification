@@ -3,16 +3,18 @@ package service;
 import entities.PositionBar;
 import entities.RebarMesh;
 
-import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class RebarMeshParser {
     public static void main(String[] args) {
 
-        final RebarMeshParser rebarMeshParser = new RebarMeshParser();
-        final RebarMesh build = rebarMeshParser.build("4— %%C5S500-100/%%C5S500-100 75x150 50+50/25", 4);
-        System.out.println();
+//        final RebarMeshParser rebarMeshParser = new RebarMeshParser();
+//        final RebarMesh build = rebarMeshParser.build("1— %%C12S500-200(300)/%%C8S500-600(500) 105x145 50/40", 4);
+        String sample = "1— %%C12S500-200(300)/%%C8S500-600(500) 105x145 50/40";
+        final Pattern compile = Pattern.compile(REGEX_SIGNATURE_REBAR_MESH);
+        final Matcher matcher = compile.matcher(sample);
+        System.out.println(matcher.matches());
 
     }
 
@@ -20,54 +22,55 @@ public class RebarMeshParser {
 
     /**
      * ѕарсит и создает объект арматурной сетки, состо€щей из двух объектов PositionBar.
+     *
      * @param signature сигнатура сетки
-     * @param quantity количество сеток по чертежу
+     * @param quantity  количество сеток по чертежу
      * @return объект арматурной сетки
      */
     public RebarMesh build(String signature, int quantity) {
+        if (rebarMeshWithOutputsByDefault(signature)) {
+            signature = signature.concat("25+25/25");
+        }
         this.content = signature;
         if (signature.charAt(0) == '4' || signature.charAt(0) == '5') {
             // секци€ дл€ легких сеток 4,5
-            if (wireRebarMeshWithOutputsByDefault(signature)) {
-                signature = signature.concat("25+25/25");
-            }
-            final Pattern compile = Pattern.compile(REGEX_SIGNATURE_WIRE_REBAR_MESH_BY_GROUPS);
+            final Pattern compile = Pattern.compile(REGEX_SIGNATURE_REBAR_MESH);
             final Matcher matcher = compile.matcher(signature);
-            if (matcher.find()) {
-                int diameterBase = extractIntegerFrom(matcher.group(2));
-                String typeBarBase = matcher.group(3);
-                int stepLengthwise = extractIntegerFrom(matcher.group(4));
+            if (matcher.matches()) {
+                int diameterBase = extractIntegerFrom(matcher.group(1));
+                String typeBarBase = matcher.group(2);
+                int stepLengthwise = extractIntegerFrom(matcher.group(3));
                 int stepLengthwiseExtra;
-                if (matcher.group(5).equals("")) {
+                if (matcher.group(4).equals("")) {
                     stepLengthwiseExtra = 0;
                 } else {
                     stepLengthwiseExtra = extractIntegerFrom(matcher
-                            .group(5)
-                            .substring(1, matcher.group(5).length() - 1));
+                            .group(4)
+                            .substring(1, matcher.group(4).length() - 1));
                 }
-                int diameterCross = extractIntegerFrom(matcher.group(7));
-                String typeBarCross = matcher.group(8);
-                int stepCrosswise = extractIntegerFrom(matcher.group(9));
+                int diameterCross = extractIntegerFrom(matcher.group(5));
+                String typeBarCross = matcher.group(6);
+                int stepCrosswise = extractIntegerFrom(matcher.group(7));
                 int stepCrosswiseExtra;
-                if (matcher.group(10).equals("")) {
+                if (matcher.group(8).equals("")) {
                     stepCrosswiseExtra = 0;
                 } else {
                     stepCrosswiseExtra = extractIntegerFrom(matcher
-                            .group(10)
-                            .substring(1, matcher.group(10).length() - 1));
+                            .group(8)
+                            .substring(1, matcher.group(8).length() - 1));
                 }
-                int lengthCrosswiseBar = extractIntegerFrom(matcher.group(11));
-                int lengthLengthwiseBar = extractIntegerFrom(matcher.group(12));
+                int lengthCrosswiseBar = extractIntegerFrom(matcher.group(9));
+                int lengthLengthwiseBar = extractIntegerFrom(matcher.group(10));
                 int outputCross1;
                 int outputCross2;
                 int outputLength1;
-                if (matcher.group(14).equals("")) {
-                    outputCross1 = outputCross2 = extractIntegerFrom(matcher.group(13));
+                if (matcher.group(12).equals("")) {
+                    outputCross1 = outputCross2 = extractIntegerFrom(matcher.group(11));
                 } else {
-                    outputCross1 = extractIntegerFrom(matcher.group(13));
-                    outputCross2 = extractIntegerFrom(matcher.group(14));
+                    outputCross1 = extractIntegerFrom(matcher.group(11));
+                    outputCross2 = extractIntegerFrom(matcher.group(12));
                 }
-                outputLength1 = extractIntegerFrom(matcher.group(15));
+                outputLength1 = extractIntegerFrom(matcher.group(13));
 
                 final PositionBar base = new PositionBar();
                 final PositionBar cross = new PositionBar();
@@ -90,20 +93,18 @@ public class RebarMeshParser {
                 rebarMesh.setCross(cross);
                 return rebarMesh;
             }
-        } else {
-
-            // секци€ дл€ т€желых сеток тип: 1-3
         }
-        return null;
+        return new RebarMesh();
     }
 
     /**
      * ѕодсчет количества продольных и поперечных стержней, исход€ из сигнатуры сетки
-     * @param stepCurrent шаг стержней, количество которых мы считаем.
+     *
+     * @param stepCurrent      шаг стержней, количество которых мы считаем.
      * @param stepCurrentExtra доборный шаг стержней, количество которых мы считаем.
-     * @param lengthSubBar длина стержней, на которых размещены стержни, которые мы считаем.
-     * @param outputSubBar1 выпуск_1 стержней, на которых размещены стержни, которые мы считаем.
-     * @param outputSubBar2 выпуск_2 стержней, на которых размещены стержни, которые мы считаем.
+     * @param lengthSubBar     длина стержней, на которых размещены стержни, которые мы считаем.
+     * @param outputSubBar1    выпуск_1 стержней, на которых размещены стержни, которые мы считаем.
+     * @param outputSubBar2    выпуск_2 стержней, на которых размещены стержни, которые мы считаем.
      * @return int количество стержней, которые мы считали.
      */
     private int getQuantityOfBarsByPair(int stepCurrent, int stepCurrentExtra, int lengthSubBar, int outputSubBar1, int outputSubBar2) {
@@ -118,17 +119,19 @@ public class RebarMeshParser {
 
     /**
      * ¬озвращает true, если в сигнатуре сетки не указаны выпуски ввиду того, что их считают по умолчанию (согласно госту 25мм).
+     *
      * @param content сигнатура сетки
      * @return true или false
      */
-    private boolean wireRebarMeshWithOutputsByDefault(String content) {
-        final Pattern compile = Pattern.compile(REGEX_CHECK_WIRE_REBAR_OUTPUTS);
+    private boolean rebarMeshWithOutputsByDefault(String content) {
+        final Pattern compile = Pattern.compile(REGEX_CHECK_REBAR_OUTPUTS);
         final Matcher matcher = compile.matcher(content);
         return !matcher.find();
     }
 
     /**
      * ѕарсит строку в инт, если невозможно, то возвращает ноль.
+     *
      * @param s строка, которую нужно преобразовать в инт.
      * @return число
      */
@@ -157,6 +160,11 @@ public class RebarMeshParser {
         this.content = content;
     }
 
+
+    /**
+     * ѕровер€ет указаны ли в сигнатуре сетки выпуски
+     */
+    public final static String REGEX_CHECK_REBAR_OUTPUTS = "\\/[0-9]{2}";
     /**
      * <h2>INFO:</h2>
      * https://regex101.com/r/jHXJDB/1
@@ -165,6 +173,7 @@ public class RebarMeshParser {
      * <ul>
      *     <li>4— %%C5S500-100(50)/%%C5S500-100 75x150 50+50/25</li>
      *     <li>4— %%C5S500-100/%%C5S500-100(50) 75x150 50/25</li>
+     *     <li>“оже самое справедливо дл€ т€желых сеток</li>
      * </ul>
      * √руппы, которые мы полчаем:
      * <ol>
@@ -202,10 +211,6 @@ public class RebarMeshParser {
      *     <li>group: 25</li>
      * </ol>
      */
-    public final static String REGEX_SIGNATURE_WIRE_REBAR_MESH_BY_GROUPS = "(%%[C,c])([0-9]{1,2})(S[0-9]{3})-([0-9]{2,3})(\\([0-9]{2,3}\\)|)\\/(%%[C,c])([0-9]{1,2})(S[0-9]{3})-([0-9]{2,3})(\\([0-9]{2,3}\\)|)[ ]+([0-9]{2,3})[x,X,х,’]([0-9]{2,3})[ ]([0-9]{2,3})([+][0-9]{2,3}|)\\/([0-9]{2,3})";
-    /**
-     * ѕровер€ет указаны ли в сигнатуре сетки выпуски
-     */
-    public final static String REGEX_CHECK_WIRE_REBAR_OUTPUTS = "\\/[0-9]{2}";
+    public final static String REGEX_SIGNATURE_REBAR_MESH = "[0-9][C,c,—,с][ ]+%%[C,c,—,с]([0-9]{1,2})([S,A,ј][0-9]{3})-([0-9]{3})(\\([0-9]{2,3}\\)|)\\/%%[C,c,—,с]([0-9]{1,2})([S,A,ј][0-9]{3})-([0-9]{3})(\\([0-9]{2,3}\\)|)[ ]+([0-9]{2,3})[X,x,х,’]([0-9]{2,3})[ ]+([0-9]{2,3})(\\+[0-9]{2,3}|)\\/([0-9]{2,3})";
 
 }
