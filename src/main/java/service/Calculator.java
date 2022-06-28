@@ -7,20 +7,19 @@ import entities.StructureBill;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.stream.Stream;
 
 public class Calculator {
-    public static void main(String[] args) {
-        int x = 10;
-        double y = 9.99;
-        System.out.println(x * y);
-        System.out.println(y / x);
-    }
 
+    /**
+     * »спользуетс€ дл€ урезани€ double значений до двух знаков после зап€той
+     */
     private static final DecimalFormat decimalFormat = new DecimalFormat("0.00");
+    /**
+     * —писок структур, передаваемых дл€ подсчета масс вход€щих в них позиций. » формирование на их базе ведомости и
+     * спецификации.
+     */
     private ArrayList<Structure> structures = new ArrayList<>();
-    private ArrayList<StructureBill> structureBills = new ArrayList<>();
 
     public Calculator() {
 
@@ -30,48 +29,10 @@ public class Calculator {
      * ќсновной движок ѕодсчета.
      */
     public void calculate() {
-        completeStructures();
-        createStructureBills();
+        completeStructures(); //done
+
     }
 
-    /**
-     * ѕроходит по списку структур, создает ведомость структуры и помещает ведомость в список.
-     */
-    private void createStructureBills() {
-        for (Structure structure :
-                structures) {
-            structureBills.add(createBill(structure));
-        }
-    }
-
-    /**
-     * —оздает ведомость на базе структуры. «аголовок, суммарные величины по типу арматуры, суммарное значение массы
-     * арматуры.
-     *
-     * @param structure данна€ структура
-     * @return ведомость структуры
-     */
-    private StructureBill createBill(Structure structure) {
-        final StructureBill structureBill = new StructureBill();
-        structureBill.setTitle(structure.getTitle());
-        structureBill.setBars(createBarsBill(structure.getPositions()));
-        structureBill.calculateTotal();
-        return structureBill;
-    }
-
-    /**
-     * ѕроходит по всем позици€м структуры и суммирует значени€ согласно типу армировани€. ¬озвращает мапу с типами
-     * арматуры.
-     *
-     * @param positions список позиций.
-     * @return мапа с типами арматуры и суммарными значени€ми.
-     */
-    private HashMap<String, Double> createBarsBill(ArrayList<PositionBar> positions) {
-        final HashMap<String, Double> map = new HashMap<>();
-        positions.forEach((positionBar -> map.merge(positionBar.getRebarType(), positionBar.getWeight(),
-                Double::sum)));
-        return map;
-    }
 
     /**
      * ѕроходит по всем структурам, обсчитыва€ массу дл€ каждой позиции структуры.
@@ -86,6 +47,7 @@ public class Calculator {
 
     /**
      * ќбходит все арматурные сетки структуры, обсчитыва€ массу позиций сетки.
+     *
      * @param rebarMeshes список арматурных сеток структуры дл€ обсчета
      */
     private void competeRebarMeshesWeights(ArrayList<RebarMesh> rebarMeshes) {
@@ -143,14 +105,6 @@ public class Calculator {
 
     public void setStructures(ArrayList<Structure> structures) {
         this.structures = structures;
-    }
-
-    public ArrayList<StructureBill> getStructureBills() {
-        return structureBills;
-    }
-
-    public void setStructureBills(ArrayList<StructureBill> structureBills) {
-        this.structureBills = structureBills;
     }
 
     private enum RebarWeightGOST {
