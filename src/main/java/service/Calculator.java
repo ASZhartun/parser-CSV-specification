@@ -1,6 +1,7 @@
 package service;
 
 import entities.PositionBar;
+import entities.RebarMesh;
 import entities.Structure;
 import entities.StructureBill;
 
@@ -10,6 +11,12 @@ import java.util.HashMap;
 import java.util.stream.Stream;
 
 public class Calculator {
+    public static void main(String[] args) {
+        int x = 10;
+        double y = 9.99;
+        System.out.println(x * y);
+        System.out.println(y / x);
+    }
 
     private static final DecimalFormat decimalFormat = new DecimalFormat("0.00");
     private ArrayList<Structure> structures = new ArrayList<>();
@@ -40,6 +47,7 @@ public class Calculator {
     /**
      * —оздает ведомость на базе структуры. «аголовок, суммарные величины по типу арматуры, суммарное значение массы
      * арматуры.
+     *
      * @param structure данна€ структура
      * @return ведомость структуры
      */
@@ -54,6 +62,7 @@ public class Calculator {
     /**
      * ѕроходит по всем позици€м структуры и суммирует значени€ согласно типу армировани€. ¬озвращает мапу с типами
      * арматуры.
+     *
      * @param positions список позиций.
      * @return мапа с типами арматуры и суммарными значени€ми.
      */
@@ -70,7 +79,20 @@ public class Calculator {
     private void completeStructures() {
         for (Structure structure :
                 structures) {
+            competeRebarMeshesWeights(structure.getRebarMeshes());
             completePositionWeights(structure.getPositions());
+        }
+    }
+
+    /**
+     * ќбходит все арматурные сетки структуры, обсчитыва€ массу позиций сетки.
+     * @param rebarMeshes список арматурных сеток структуры дл€ обсчета
+     */
+    private void competeRebarMeshesWeights(ArrayList<RebarMesh> rebarMeshes) {
+        for (RebarMesh rebarMesh :
+                rebarMeshes) {
+            calculateWeight(rebarMesh.getBase());
+            calculateWeight(rebarMesh.getCross());
         }
     }
 
@@ -93,9 +115,9 @@ public class Calculator {
      * @param position данна€ позици€ (стержень арматуры).
      */
     private void calculateWeight(PositionBar position) {
-        double weight = position.getLength() * getMeterWeight(position.getDiameter())/1000;
+        double weight = position.getLength() * getMeterWeight(position.getDiameter()) / 1000;
         try {
-            position.setWeight(Double.parseDouble(decimalFormat.format(weight).replaceAll(",",".")));
+            position.setWeight(Double.parseDouble(decimalFormat.format(weight).replaceAll(",", ".")));
         } catch (NumberFormatException e) {
             System.out.println("ѕроеб с конвертацией после усечение массы до двух знаков, жмых");
         }

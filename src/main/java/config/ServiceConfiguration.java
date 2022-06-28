@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Scope;
 import service.Calculator;
 import service.Operator;
 import service.ParserCSV;
+import service.RebarMeshParser;
 
 @Configuration
 public class ServiceConfiguration {
@@ -39,5 +40,11 @@ public class ServiceConfiguration {
     @Scope("singleton")
     public Calculator getCalculator() {
         return new Calculator();
+    }
+
+    @Bean("rebarMeshParser")
+    @Scope("singleton")
+    public RebarMeshParser getRebarMeshParser() {
+        return new RebarMeshParser();
     }
 }

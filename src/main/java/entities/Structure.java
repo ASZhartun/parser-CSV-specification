@@ -5,6 +5,7 @@ import java.util.ArrayList;
 public class Structure {
     private String title;
     private ArrayList<PositionBar> positions;
+    private ArrayList<RebarMesh> rebarMeshes;
     private Double concreteVolume;
 
     public Structure() {
@@ -37,6 +38,14 @@ public class Structure {
 
     public void setConcreteVolume(Double concreteVolume) {
         this.concreteVolume = concreteVolume;
+    }
+
+    public ArrayList<RebarMesh> getRebarMeshes() {
+        return rebarMeshes;
+    }
+
+    public void setRebarMeshes(ArrayList<RebarMesh> rebarMeshes) {
+        this.rebarMeshes = rebarMeshes;
     }
 
     @Override
