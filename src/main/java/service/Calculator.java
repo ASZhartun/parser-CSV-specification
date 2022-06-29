@@ -1,9 +1,6 @@
 package service;
 
-import entities.PositionBar;
-import entities.RebarMesh;
-import entities.Structure;
-import entities.StructureBill;
+import entities.*;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -21,6 +18,9 @@ public class Calculator {
      */
     private ArrayList<Structure> structures = new ArrayList<>();
 
+    private CalculatedStructureCreator calculatedStructureCreator;
+
+
     public Calculator() {
 
     }
@@ -30,7 +30,7 @@ public class Calculator {
      */
     public void calculate() {
         completeStructures(); //done
-
+        calculatedStructureCreator.build(structures);
     }
 
 
