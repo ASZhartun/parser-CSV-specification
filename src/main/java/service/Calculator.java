@@ -18,7 +18,10 @@ public class Calculator {
      * спецификации.
      */
     private ArrayList<Structure> structures = new ArrayList<>();
-
+    /**
+     * ƒополнительый модуль дл€ просчета структур. »спользуетс€ дл€ формировани€ структур в просчитанные структуры,
+     * которые будут использованы при создании ведомости элементов.
+     */
     private CalculatedStructureCreator calculatedStructureCreator;
 
     public Calculator() {

@@ -9,7 +9,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class CalculatedStructureCreator {
-
+    /**
+     * Список обсчитанных структур.
+     */
     private final ArrayList<CalculatedStructure> calculatedStructures = new ArrayList<>();
 
     public CalculatedStructureCreator() {
