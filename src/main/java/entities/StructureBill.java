@@ -1,43 +1,29 @@
 package entities;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class StructureBill {
-    private String title;
-
-    private HashMap<String, Double> bars;
-
-    private Double total = 0.0;
+    private String header;
+    private ArrayList<CalculatedStructure> calculatedStructures = new ArrayList<>();
 
     public StructureBill() {
 
     }
 
-    public String getTitle() {
-        return title;
+    public String getHeader() {
+        return header;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
+    public void setHeader(String header) {
+        this.header = header;
     }
 
-    public HashMap<String, Double> getBars() {
-        return bars;
+    public ArrayList<CalculatedStructure> getCalculatedStructures() {
+        return calculatedStructures;
     }
 
-    public void setBars(HashMap<String, Double> bars) {
-        this.bars = bars;
-    }
-
-    public Double getTotal() {
-        return total;
-    }
-
-    public void setTotal(Double total) {
-        this.total = total;
-    }
-
-    public void calculateTotal() {
-        bars.values().forEach((item) -> total += item);
+    public void setCalculatedStructures(ArrayList<CalculatedStructure> calculatedStructures) {
+        this.calculatedStructures = calculatedStructures;
     }
 }
