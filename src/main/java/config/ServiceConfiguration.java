@@ -5,10 +5,7 @@ import dao.WriterCSV.WriterCSV;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
-import service.Calculator;
-import service.Operator;
-import service.ParserCSV;
-import service.RebarMeshParser;
+import service.*;
 
 @Configuration
 public class ServiceConfiguration {
@@ -46,5 +43,11 @@ public class ServiceConfiguration {
     @Scope("singleton")
     public RebarMeshParser getRebarMeshParser() {
         return new RebarMeshParser();
+    }
+
+    @Bean("calculatedStructureCreator")
+    @Scope("singleton")
+    public CalculatedStructureCreator getCalculatedStructureCreator() {
+        return new CalculatedStructureCreator();
     }
 }

@@ -18,6 +18,7 @@ public class TypeBarBlock {
      * Суммарная масса блока
      */
     private Double totalBlockWeight = 0d;
+
     public TypeBarBlock() {
 
     }
@@ -44,5 +45,10 @@ public class TypeBarBlock {
 
     public void setTotalBlockWeight(Double totalBlockWeight) {
         this.totalBlockWeight = totalBlockWeight;
+    }
+
+    public void calculateTotalWeight() {
+        diameterPositionWeights.values()
+                .forEach((item) -> totalBlockWeight += item);
     }
 }

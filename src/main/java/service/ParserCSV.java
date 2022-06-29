@@ -2,6 +2,7 @@ package service;
 
 import entities.*;
 import exceptions.CreatingTableException;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 import java.util.regex.Matcher;
@@ -9,10 +10,10 @@ import java.util.regex.Pattern;
 
 
 public class ParserCSV {
-
     /**
      * Вспомогательный парсер арматурных сеток по ГОСТ 23279-2012.
      */
+
     private RebarMeshParser rebarMeshParser;
     /**
      * Список, содержащий все структуры, которые описаны в общей таблице.
@@ -234,7 +235,6 @@ public class ParserCSV {
      * Список возвращается.
      *
      * @param block таблица структуры.
-     * @return список позиций стержней.
      */
     private void parseBlockBarsPositions(BlockTable block, Structure structure) {
         final ArrayList<PositionBar> positionBars = new ArrayList<>();
@@ -257,6 +257,7 @@ public class ParserCSV {
 
     /**
      * Парсит строку с описанием позиции, создает и возвращает объект полученной позиции.
+     *
      * @param line объект строки, в которой находится позиция с арматурным стержней.
      * @return объект позиции стержня
      */
@@ -401,4 +402,12 @@ public class ParserCSV {
         this.structures = structures;
     }
 
+    public RebarMeshParser getRebarMeshParser() {
+        return rebarMeshParser;
+    }
+
+    @Autowired
+    public void setRebarMeshParser(RebarMeshParser rebarMeshParser) {
+        this.rebarMeshParser = rebarMeshParser;
+    }
 }

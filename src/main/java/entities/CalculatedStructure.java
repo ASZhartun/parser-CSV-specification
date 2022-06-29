@@ -46,4 +46,8 @@ public class CalculatedStructure {
     public void setTotalWeight(Double totalWeight) {
         this.totalWeight = totalWeight;
     }
+
+    public void calculateTotalWeight() {
+        typeBarBlocks.forEach((item) -> totalWeight += item.getTotalBlockWeight());
+    }
 }

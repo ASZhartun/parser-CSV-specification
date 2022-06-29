@@ -1,6 +1,7 @@
 package service;
 
 import entities.*;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -19,7 +20,6 @@ public class Calculator {
     private ArrayList<Structure> structures = new ArrayList<>();
 
     private CalculatedStructureCreator calculatedStructureCreator;
-
 
     public Calculator() {
 
@@ -105,6 +105,15 @@ public class Calculator {
 
     public void setStructures(ArrayList<Structure> structures) {
         this.structures = structures;
+    }
+
+    public CalculatedStructureCreator getCalculatedStructureCreator() {
+        return calculatedStructureCreator;
+    }
+
+    @Autowired
+    public void setCalculatedStructureCreator(CalculatedStructureCreator calculatedStructureCreator) {
+        this.calculatedStructureCreator = calculatedStructureCreator;
     }
 
     private enum RebarWeightGOST {

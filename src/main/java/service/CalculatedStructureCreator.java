@@ -4,10 +4,17 @@ import entities.*;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class CalculatedStructureCreator {
 
     private final ArrayList<CalculatedStructure> calculatedStructures = new ArrayList<>();
+
+    public CalculatedStructureCreator() {
+
+    }
 
     /**
      * —оздает из структур ѕросчитанные —труктуры, в которой есть суммарные значени€ по типу армировани€ дл€ каждого
@@ -30,24 +37,49 @@ public class CalculatedStructureCreator {
      */
     private CalculatedStructure calculate(Structure structure) {
         final CalculatedStructure calculatedStructure = new CalculatedStructure();
-        final ArrayList<String> types = new ArrayList<>();
         final ArrayList<TypeBarBlock> typeBarBlocks = new ArrayList<>();
-        types.addAll(createListOfBarTypes(structure));
+        final ArrayList<String> types = new ArrayList<>(createListOfBarTypes(structure));
         for (String type :
                 types) {
             typeBarBlocks.add(createTypeBarBlockBy(type, structure));
         }
-        return null;
+        calculatedStructure.setTypeBarBlocks(typeBarBlocks);
+        calculatedStructure.setTitle(structure.getTitle());
+        calculatedStructure.calculateTotalWeight();
+        return calculatedStructure;
     }
 
     /**
      * —оздает TypeBarBlock на базе структуры с указанным типом арматуры
-     * @param type указанный тип арматуры (S500, S240, etc.)
+     *
+     * @param type      указанный тип арматуры (S500, S240, etc.)
      * @param structure данна€ структура
      * @return TypeBarBlock
      */
     private TypeBarBlock createTypeBarBlockBy(String type, Structure structure) {
-        return null;
+        final ArrayList<PositionBar> allPositionsBar = getAllPositionsBarFrom(structure);
+        final List<PositionBar> collect = allPositionsBar
+                .stream()
+                .filter((item) -> item.getRebarType().equals(type))
+                .collect(Collectors.toList());
+        final TypeBarBlock typeBarBlock = new TypeBarBlock();
+        typeBarBlock.setBarType(type);
+        typeBarBlock.setDiameterPositionWeights(createBarMapDiameterFrom(allPositionsBar));
+        typeBarBlock.calculateTotalWeight();
+        return typeBarBlock;
+    }
+
+    /**
+     * ‘ормирует мапу из списка PositionBar.  люч - диаметр.
+     *
+     * @param allPositionsBar список PositionBar.
+     * @return HashMap<Integer, Double>
+     */
+    private HashMap<Integer, Double> createBarMapDiameterFrom(ArrayList<PositionBar> allPositionsBar) {
+        final HashMap<Integer, Double> map = new HashMap<>();
+        allPositionsBar
+                .forEach((item) -> map.merge(item.getDiameter(), item.getWeight(), Double::sum));
+        return map;
     }
 
     /**
@@ -70,6 +102,7 @@ public class CalculatedStructureCreator {
 
     /**
      * ¬озвращает полный список PositionBar из списка стержневых позиций и списка арматурных сеток.
+     *
      * @param structure данна€ структура
      * @return полный список позиций
      */
@@ -82,5 +115,9 @@ public class CalculatedStructureCreator {
         }
         positionBars.addAll(structure.getPositions());
         return positionBars;
+    }
+
+    public ArrayList<CalculatedStructure> getCalculatedStructures() {
+        return calculatedStructures;
     }
 }
