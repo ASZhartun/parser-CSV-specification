@@ -1,6 +1,8 @@
 package service;
 
-import entities.*;
+import entities.PositionBar;
+import entities.RebarMesh;
+import entities.Structure;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.text.DecimalFormat;
@@ -18,7 +20,10 @@ public class Calculator {
      * спецификации.
      */
     private ArrayList<Structure> structures = new ArrayList<>();
-
+    /**
+     * ƒополнительый модуль дл€ просчета структур. »спользуетс€ дл€ формировани€ структур в просчитанные структуры,
+     * которые будут использованы при создании ведомости элементов.
+     */
     private CalculatedStructureCreator calculatedStructureCreator;
 
     public Calculator() {

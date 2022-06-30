@@ -24,7 +24,6 @@ public class RebarMeshParser {
         }
         this.content = signature;
         if (signature.charAt(0) == '4' || signature.charAt(0) == '5') {
-            // секция для легких сеток 4,5
             final Pattern compile = Pattern.compile(REGEX_SIGNATURE_REBAR_MESH);
             final Matcher matcher = compile.matcher(signature);
             if (matcher.matches()) {
