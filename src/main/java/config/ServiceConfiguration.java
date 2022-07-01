@@ -50,4 +50,16 @@ public class ServiceConfiguration {
     public CalculatedStructureCreator getCalculatedStructureCreator() {
         return new CalculatedStructureCreator();
     }
+
+    @Bean("billPrinter")
+    @Scope("singleton")
+    public BillPrinter getBillPrinter() {
+        return new BillPrinter();
+    }
+
+    @Bean("specPrinter")
+    @Scope("singleton")
+    public SpecPrinter getSpecPrinter() {
+        return new SpecPrinter();
+    }
 }

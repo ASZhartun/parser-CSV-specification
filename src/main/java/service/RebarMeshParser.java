@@ -81,10 +81,24 @@ public class RebarMeshParser {
                 final RebarMesh rebarMesh = new RebarMesh();
                 rebarMesh.setBase(base);
                 rebarMesh.setCross(cross);
+                rebarMesh.setRebarTypeByDoc(getTypeFromSignature());
+                rebarMesh.setQuantity(quantity);
+                rebarMesh.setStartNaming(this.content);
                 return rebarMesh;
             }
         }
         return new RebarMesh();
+    }
+
+    /**
+     * Возвращает тип сетки из ее сигнатуры.
+     * @return строка
+     */
+    private String getTypeFromSignature() {
+        final Pattern compile = Pattern.compile("([0-9][CcСс])");
+        final Matcher matcher = compile.matcher(content);
+        if (matcher.find()) return matcher.group(1);
+        return "";
     }
 
     /**

@@ -1,14 +1,12 @@
 import config.EntityConfiguration;
 import config.ServiceConfiguration;
 import dao.ReaderCSV.ReaderCSV;
-import dao.WriterCSV.WriterCSV;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import service.Calculator;
-import service.Operator;
 import service.ParserCSV;
 
 
-import java.util.ArrayList;
+
 
 public class Main {
     public static void main(String[] args) {

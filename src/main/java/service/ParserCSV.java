@@ -182,8 +182,24 @@ public class ParserCSV {
         final Structure structure = new Structure();
         structure.setTitle(parseBlockTitle(block));
         structure.setConcreteVolume(parseBlockConcreteVolume(block));
+        structure.setConcreteDefinition(parseBlockConcreteDefinition(block));
         parseBlockBarsPositions(block, structure);
         return structure;
+    }
+
+    /**
+     * Возвращает список строк из блока структуры, содержащий описание марки бетона
+     * @param block блок, описывающий структуру
+     * @return массив строк, описывающий бетон
+     */
+    private ArrayList<String> parseBlockConcreteDefinition(BlockTable block) {
+        final ArrayList<String> definitionLines = new ArrayList<>();
+        int indexConcrete = getIndexOfMaterialsPart(block) + 1;
+        final ArrayList<Line> lines = block.getLines();
+        while (!lines.get(indexConcrete).equals(" ")) {
+            definitionLines.add(lines.get(indexConcrete).getName());
+        }
+        return definitionLines;
     }
 
     /**
