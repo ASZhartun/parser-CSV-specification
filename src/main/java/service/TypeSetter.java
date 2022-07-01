@@ -31,13 +31,11 @@ public class TypeSetter {
     }
 
 
-
-
-
     public SpecPrinter getSpecPrinter() {
         return specPrinter;
     }
 
+    @Autowired
     public void setSpecPrinter(SpecPrinter specPrinter) {
         this.specPrinter = specPrinter;
     }
@@ -46,6 +44,7 @@ public class TypeSetter {
         return billPrinter;
     }
 
+    @Autowired
     public void setBillPrinter(BillPrinter billPrinter) {
         this.billPrinter = billPrinter;
     }

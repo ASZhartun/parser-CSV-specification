@@ -7,6 +7,7 @@ public class Structure {
     private ArrayList<PositionBar> positions;
     private ArrayList<RebarMesh> rebarMeshes;
     private Double concreteVolume;
+    private ArrayList<String> concreteDefinition = new ArrayList<>();
 
     public Structure() {
 
@@ -46,6 +47,14 @@ public class Structure {
 
     public void setRebarMeshes(ArrayList<RebarMesh> rebarMeshes) {
         this.rebarMeshes = rebarMeshes;
+    }
+
+    public ArrayList<String> getConcreteDefinition() {
+        return concreteDefinition;
+    }
+
+    public void setConcreteDefinition(ArrayList<String> concreteDefinition) {
+        this.concreteDefinition = concreteDefinition;
     }
 
     @Override
