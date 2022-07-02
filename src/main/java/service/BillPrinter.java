@@ -3,13 +3,37 @@ package service;
 import entities.CalculatedStructure;
 import entities.TypeBarBlock;
 
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.TreeMap;
+import java.util.TreeSet;
 
 /**
  * Класс, который формирует csv таблицу ведомости расхода стали.
  */
 public class BillPrinter {
+    public static void main(String[] args) {
+        final TreeMap<Integer, Double> map = new TreeMap<>();
+        map.put(20,0d);
+        map.put(14,0d);
+        map.put(14, 50.37);
+        map.merge(14, 49.63, Double::sum);
+        final TreeSet<Integer> tree = new TreeSet<>(map.keySet());
+        System.out.println(tree);
+
+        System.out.println(map.get(14));
+
+//        Object {
+//            final ArrayList<String> title of elements = new ArrayList<String>;
+//            final ArrayList<TypeBarExtendingTable> typeBarExtendingTables = new ArrayList<TypeBarExtendingTable>();
+//
+//            TypeBarExtendingTable {
+//                String title of type = "S240";
+//                final HashMap<Integer, ArrayList<Double>> diameters with values of all structures = new HashMap<>();
+//            }
+//        }
+    }
     public BillPrinter() {
 
     }
@@ -62,7 +86,7 @@ public class BillPrinter {
                 typeBarBlocks) {
             q += getQuantityOfDiameters(item.getDiameterPositionWeights());
         }
-        return 0;
+        return q;
     }
 
     /**
