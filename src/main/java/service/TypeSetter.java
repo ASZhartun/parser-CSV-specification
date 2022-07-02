@@ -26,7 +26,7 @@ public class TypeSetter {
      * @param structures                 список распаршенных структур
      */
     public void build(CalculatedStructureCreator calculatedStructureCreator, ArrayList<Structure> structures) {
-//        bill = billPrinter.build(calculatedStructureCreator);
+        bill = billPrinter.build(calculatedStructureCreator);
         spec = specPrinter.build(structures);
     }
 
