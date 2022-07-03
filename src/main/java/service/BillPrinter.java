@@ -1,13 +1,12 @@
 package service;
 
+import entities.BillContent;
 import entities.CalculatedStructure;
 import entities.TypeBarBlock;
 
 import javax.swing.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.TreeMap;
-import java.util.TreeSet;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Класс, который формирует csv таблицу ведомости расхода стали.
@@ -40,9 +39,13 @@ public class BillPrinter {
 
 
     public String build(CalculatedStructureCreator calculatedStructureCreator) {
-        int billColumnQuantity = getBillColumnQuantity(calculatedStructureCreator.getCalculatedStructures()) + 1; // +1 для заголовка структуры (колонка "Наименование(Марка)")
+        final ArrayList<CalculatedStructure> calculatedStructures = calculatedStructureCreator.getCalculatedStructures();
+        calculatedStructures.forEach(CalculatedStructure::extendBarBlocks); // расширили карту диаметров для каждого блока просчитанной структуры
+        final BillContent billContent = new BillContent(calculatedStructures);
         return null;
     }
+
+
 
     /**
      * Возвращает максимальное количество колонок из всех доступных просчитанных структур

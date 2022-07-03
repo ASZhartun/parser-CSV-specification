@@ -23,6 +23,17 @@ public class CalculatedStructure {
 
     }
 
+    /**
+     * Расширяет текущую мапу возможными диаметрами арматуры
+     */
+    public void extendBarBlocks() {
+        this.typeBarBlocks.forEach((item) -> {
+            TypeBarBlock.diameters.forEach((diameter) -> {
+                item.getDiameterPositionWeights().putIfAbsent(diameter, 0d);
+            });
+        });
+    }
+
     public String getTitle() {
         return title;
     }
