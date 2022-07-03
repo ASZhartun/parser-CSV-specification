@@ -1,6 +1,10 @@
 package entities;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.TreeSet;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Объект блока с арматурой определенного типа, который входит в состав ведомости элементов.
@@ -51,4 +55,9 @@ public class TypeBarBlock {
         diameterPositionWeights.values()
                 .forEach((item) -> totalBlockWeight += item);
     }
+
+
+
+    public final static TreeSet<Integer> diameters = new TreeSet<>(Stream.of(3, 4, 5, 6, 8, 10, 12, 14, 16, 18, 20, 22, 25, 28, 30, 32, 36, 40).collect(Collectors.toList()));
+
 }
