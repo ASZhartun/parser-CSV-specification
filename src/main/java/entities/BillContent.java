@@ -1,9 +1,6 @@
 package entities;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.TreeSet;
+import java.util.*;
 
 /**
  * Объект масс и имен структур в ведомости расхода стали.
@@ -35,6 +32,39 @@ public class BillContent {
                 billBlocks.add(new TypeBarBillBlock(block.getBarType()));
             });
         });
+        cleanBlocks(billBlocks);
+    }
+
+    /**
+     * Чистит блоки от нулевых позиций
+     *
+     * @param billBlocks множество блоков со значениями весов всех структур
+     */
+    private void cleanBlocks(TreeSet<TypeBarBillBlock> billBlocks) {
+        billBlocks.forEach(this::clean);
+    }
+
+    /**
+     * Чистит мапу от нулевых позиций
+     *
+     * @param item мапа с диаметрами и весами по всем структурам
+     */
+    private void clean(TypeBarBillBlock item) {
+        item.getDiameterPosition().entrySet().removeIf(this::hasAllZeroValues);
+    }
+
+    /**
+     * Возвращает true, если все значения списка значений по диаметру равны 0.
+     *
+     * @param next нода мапы с диаметром и списком значений.
+     * @return boolean
+     */
+    private boolean hasAllZeroValues(Map.Entry<Integer, ArrayList<Double>> next) {
+        final ArrayList<Double> values = next.getValue();
+        for (Double value : values) {
+            if (value != 0) return false;
+        }
+        return true;
     }
 
     /**
@@ -49,13 +79,15 @@ public class BillContent {
                 fillCommonBillMapBy(barType, diameterPositions, findIndexOf(structure.getTitle()));
             });
         });
+
     }
 
     /**
      * Заполняет значения весов блока в ведомости по имени типа арматуры указанными в передаваемой карте значений весов
-     * @param barType типа арматуры блока
+     *
+     * @param barType           типа арматуры блока
      * @param diameterPositions карта значений с диаметрами-ключами, весами-значениями
-     * @param index порядковый номер структуры
+     * @param index             порядковый номер структуры
      */
     private void fillCommonBillMapBy(String barType, HashMap<Integer, Double> diameterPositions, int index) {
         final TypeBarBillBlock typeBarBillBlock = this.billBlocks.stream().filter((item) -> item.getBarType().equals(barType)).findFirst().get();
@@ -64,11 +96,11 @@ public class BillContent {
             final ArrayList<Double> doubles = billBlockMap.get(key);
             doubles.add(index, value);
         });
-
     }
 
     /**
      * Ищет порядковый номер структуры в списке ведомости по данному наименованию
+     *
      * @param name тип арматуры
      * @return индекс int
      */
@@ -77,21 +109,101 @@ public class BillContent {
     }
 
     /**
-     * Возвращает строковое-табличное представление заполненной таблицы
-     * @return
+     * Возвращает строковое представление ведомости.
+     *
+     * @return строка
      */
     private String getContentTableString() {
-        final StringBuilder table = new StringBuilder();
-        table.append(getTitleBillTable());
+        int columns = 2;
+        columns += billBlocks.stream().mapToInt((item) -> item.getDiameterPosition().size()).sum();
+        columns += billBlocks.size();
+        final ArrayList<Integer> blockSizes = new ArrayList<>();
+        billBlocks.forEach((item) -> blockSizes.add(item.getDiameterPosition().size()));
+        final StringBuilder header = new StringBuilder();
+        header.append(createStaticTitle(columns));
+        header.append(createBlocksTitle(blockSizes, columns));
+        header.append(createContent(blockSizes,columns));
         return null;
     }
 
     /**
-     * Возвращает шапку ведомости
+     * Возвращает строки таблицы с диаметрами, значениями весов всех структур.
+     * @param blockSizes список размеров арматурных блоков
+     * @param columns число колонок ведомости
+     * @return строка-представление данных по всем структурам
+     */
+    private String createContent(ArrayList<Integer> blockSizes, int columns) {
+        return null;
+    }
+
+    /**
+     * Возвращает строку с заполненной информацией о диаметрах в таблице ведомости.
+     *
+     * @param blockSizes массив с размерами арматурных блоков
+     * @param columns    всего колонок ведомости
+     * @return строка-представление данных ведомости расхода стали
+     */
+    private String createBlocksTitle(ArrayList<Integer> blockSizes, int columns) {
+        final StringBuilder blockTitle = new StringBuilder();
+        for (int i = 0; i < billBlocks.size(); i++) {
+            blockTitle.append(" ;");
+            if (i == 0) {
+                billBlocks.forEach((item) -> {
+                    final String title = item.getBarType();
+                    blockTitle
+                            .append(title)
+                            .append(";")
+                            .append(addEmptyCellsWith(item.getDiameterPosition().size() + 1, " ;"));
+                });
+                blockTitle.append(" ;\n");
+            }
+            if (i == 1) {
+                billBlocks.forEach((item) -> {
+                    final String title = item.getBarType();
+                    blockTitle
+                            .append("СТБ 1704-2012")
+                            .append(";")
+                            .append(addEmptyCellsWith(item.getDiameterPosition().size() + 1, " ;"));
+                });
+                blockTitle.append(" ;\n");
+            }
+        }
+        return blockTitle.toString();
+    }
+
+    /**
+     * Создает первые две строки ведомости (неизменяемые).
+     *
+     * @param columns количество колонок ведомости
+     * @return строковое представление первых двух строк таблицы
+     */
+    private String createStaticTitle(int columns) {
+        final StringBuilder staticHead = new StringBuilder();
+        for (int i = 0; i < billBlocks.size(); i++) {
+            if (i == 0) {
+                staticHead.append("Марка элемента").append("Изделия арматурные");
+                staticHead.append(addEmptyCellsWith(columns - 3, " ;"));
+                staticHead.append("Всего;\n");
+            }
+            if (i == 1) {
+                staticHead.append(" ;");
+                staticHead.append("Арматура класса");
+                staticHead.append(addEmptyCellsWith(columns - 2, " ;"));
+                staticHead.append('\n');
+            }
+        }
+        return staticHead.toString();
+    }
+
+    /**
+     * Взвращает строку с заполненными ячейками CSV формата
+     *
+     * @param i количество ячеек
+     * @param s образец заполнения
      * @return строка
      */
-    private String getTitleBillTable() {
-        return null;
+    private String addEmptyCellsWith(int i, String s) {
+        return String.valueOf(s).repeat(Math.max(0, i));
     }
 
     public BillContent() {
