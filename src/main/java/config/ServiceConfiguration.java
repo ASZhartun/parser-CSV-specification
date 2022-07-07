@@ -5,6 +5,7 @@ import dao.WriterCSV.WriterCSV;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Controller;
 import service.*;
 
 @Configuration
@@ -18,7 +19,7 @@ public class ServiceConfiguration {
     @Bean("writer")
     @Scope("singleton")
     public WriterCSV getWriterCSV() {
-        return new WriterCSV();
+        return new WriterCSV("C:\\");
     }
 
     @Bean("operator")
@@ -62,4 +63,5 @@ public class ServiceConfiguration {
     public SpecPrinter getSpecPrinter() {
         return new SpecPrinter();
     }
+
 }

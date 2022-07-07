@@ -21,7 +21,9 @@ public class ReaderCSV {
 
     }
 
-    public void readCSV() {
+    public void readCSV(String path) {
+        this.pathCSV = path;
+        setPathFolder(path);
         try {
             final FileReader fileReader = new FileReader(pathCSV);
             final BufferedReader bufferedReader = new BufferedReader(fileReader);
