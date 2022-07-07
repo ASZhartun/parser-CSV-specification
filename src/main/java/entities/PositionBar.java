@@ -66,12 +66,13 @@ public class PositionBar {
 
     @Override
     public String toString() {
-        return "PositionBar{" +
-                "rebarType='" + rebarType + '\'' +
-                ", diameter=" + diameter +
-                ", length=" + length +
-                ", quantity=" + quantity +
-                ", weight=" + weight +
-                '}';
+        final StringBuilder inline = new StringBuilder();
+        inline.append(diameter)
+                .append(" ")
+                .append(rebarType)
+                .append(" ")
+                .append("—“¡ 1704-2012, L=")
+                .append(length);
+        return inline.toString();
     }
 }

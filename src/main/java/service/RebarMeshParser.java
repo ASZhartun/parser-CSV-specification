@@ -24,7 +24,6 @@ public class RebarMeshParser {
         }
         this.content = signature;
         if (signature.charAt(0) == '4' || signature.charAt(0) == '5') {
-            // секция для легких сеток 4,5
             final Pattern compile = Pattern.compile(REGEX_SIGNATURE_REBAR_MESH);
             final Matcher matcher = compile.matcher(signature);
             if (matcher.matches()) {
@@ -82,10 +81,24 @@ public class RebarMeshParser {
                 final RebarMesh rebarMesh = new RebarMesh();
                 rebarMesh.setBase(base);
                 rebarMesh.setCross(cross);
+                rebarMesh.setRebarTypeByDoc(getTypeFromSignature());
+                rebarMesh.setQuantity(quantity);
+                rebarMesh.setStartNaming(this.content);
                 return rebarMesh;
             }
         }
         return new RebarMesh();
+    }
+
+    /**
+     * Возвращает тип сетки из ее сигнатуры.
+     * @return строка
+     */
+    private String getTypeFromSignature() {
+        final Pattern compile = Pattern.compile("([0-9][CcСс])");
+        final Matcher matcher = compile.matcher(content);
+        if (matcher.find()) return matcher.group(1);
+        return "";
     }
 
     /**

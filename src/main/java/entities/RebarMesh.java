@@ -4,6 +4,9 @@ public class RebarMesh {
     private PositionBar base;
     private PositionBar cross;
     private String doc = "√Œ—“ 23279-2012";
+    private String rebarTypeByDoc;
+    private Integer quantity;
+    private String startNaming;
 
     public RebarMesh(PositionBar base, PositionBar cross) {
         this.base = base;
@@ -32,5 +35,33 @@ public class RebarMesh {
 
     public String getDoc() {
         return doc;
+    }
+
+    public void setDoc(String doc) {
+        this.doc = doc;
+    }
+
+    public String getRebarTypeByDoc() {
+        return rebarTypeByDoc;
+    }
+
+    public void setRebarTypeByDoc(String rebarTypeByDoc) {
+        this.rebarTypeByDoc = rebarTypeByDoc;
+    }
+
+    public Integer getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(Integer quantity) {
+        this.quantity = quantity;
+    }
+
+    public String getStartNaming() {
+        return startNaming;
+    }
+
+    public void setStartNaming(String startNaming) {
+        this.startNaming = startNaming;
     }
 }
