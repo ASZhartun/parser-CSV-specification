@@ -50,6 +50,7 @@ public class SpecPrinter {
 
     /**
      * Склеивает строки, формирующиеся из полей объекта структуры, в единую таблицеподобную строку.
+     *
      * @param structure объект текущей структуры
      * @return строка (в физ. смысле таблица) из структуры
      */
@@ -77,6 +78,7 @@ public class SpecPrinter {
 
     /**
      * Создает строчное представление бетона из объекта структуры.
+     *
      * @param structure объект структуры
      * @return строка-представление
      */
@@ -84,16 +86,12 @@ public class SpecPrinter {
         final StringBuilder concreteContent = new StringBuilder();
         concreteContent.append(" ;")
                 .append("СТБ EN 206-2016;")
-                .append(structure.getConcreteDefinition().get(0))
+                .append(structure.getConcreteDefinition())
                 .append("; ; ;")
                 .append(structure.getConcreteVolume())
                 .append("м3;\n");
-        final ArrayList<String> concreteDefinition = structure.getConcreteDefinition();
-        for (int i = 1; i < concreteDefinition.size(); i++) {
-            concreteContent.append(" ; ;")
-                    .append(concreteDefinition.get(i))
-                    .append("; ; ; ;\n");
-        }
+
+
         return concreteContent.toString();
     }
 

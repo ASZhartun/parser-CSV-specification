@@ -92,13 +92,13 @@ public class ParserCSV {
         final ArrayList<Line> commonLines = blockTable.getLines();
         for (Line line : commonLines) {
             if (commonLines.indexOf(line) != 0) {
-                if (lineHasStructureName(line)) {
+                if (lineHasStructureName(line) || commonLines.indexOf(line) == commonLines.size() - 1) {
                     downBorderIndex = blockTable.getLines().indexOf(line);
                     final BlockTable temp = new BlockTable();
                     temp.setLines(
                             new ArrayList<>(
                                     commonLines
-                                            .subList(upBorderIndex, downBorderIndex)
+                                            .subList(upBorderIndex, downBorderIndex + 1)
                             )
                     );
                     blockTables.add(temp);
@@ -106,7 +106,6 @@ public class ParserCSV {
                 }
             }
         }
-        System.out.println(blockTables.get(0).getLines());
         return blockTables;
 
     }
@@ -189,17 +188,19 @@ public class ParserCSV {
 
     /**
      * Возвращает список строк из блока структуры, содержащий описание марки бетона
+     *
      * @param block блок, описывающий структуру
      * @return массив строк, описывающий бетон
      */
-    private ArrayList<String> parseBlockConcreteDefinition(BlockTable block) {
-        final ArrayList<String> definitionLines = new ArrayList<>();
+    private String parseBlockConcreteDefinition(BlockTable block) {
+        String definition="";
         int indexConcrete = getIndexOfMaterialsPart(block) + 1;
         final ArrayList<Line> lines = block.getLines();
-        while (!lines.get(indexConcrete).equals(" ")) {
-            definitionLines.add(lines.get(indexConcrete).getName());
+        if (!lines.get(indexConcrete).getName().equals(" ")) {
+            definition = (lines.get(indexConcrete).getName());
+
         }
-        return definitionLines;
+        return definition;
     }
 
     /**
