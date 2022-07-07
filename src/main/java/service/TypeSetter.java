@@ -7,8 +7,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 
+/**
+ * Держатель двух сущностей по созданию таблиц: спецификация, ведомость.
+ */
 public class TypeSetter {
-    private ReaderCSV readerCSV;
     private SpecPrinter specPrinter;
     private BillPrinter billPrinter;
 
@@ -49,12 +51,20 @@ public class TypeSetter {
         this.billPrinter = billPrinter;
     }
 
-    public ReaderCSV getReaderCSV() {
-        return readerCSV;
+
+    public String getBill() {
+        return bill;
     }
 
-    @Autowired
-    public void setReaderCSV(ReaderCSV readerCSV) {
-        this.readerCSV = readerCSV;
+    public void setBill(String bill) {
+        this.bill = bill;
+    }
+
+    public String getSpec() {
+        return spec;
+    }
+
+    public void setSpec(String spec) {
+        this.spec = spec;
     }
 }

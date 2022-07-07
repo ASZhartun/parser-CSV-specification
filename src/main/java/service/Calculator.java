@@ -33,9 +33,10 @@ public class Calculator {
     /**
      * Основной движок Подсчета.
      */
-    public void calculate() {
+    public void calculate(ArrayList<Structure> structures) {
+        this.structures = structures;
         completeStructures(); //done
-        calculatedStructureCreator.build(structures);
+        calculatedStructureCreator.build(this.structures);
     }
 
 
