@@ -66,7 +66,7 @@ public class CalculatedStructureCreator {
                 .collect(Collectors.toList());
         final TypeBarBlock typeBarBlock = new TypeBarBlock();
         typeBarBlock.setBarType(type);
-        typeBarBlock.setDiameterPositionWeights(createBarMapDiameterFrom(allPositionsBar));
+        typeBarBlock.setDiameterPositionWeights(createBarMapDiameterFrom(new ArrayList<>(collect)));
         typeBarBlock.calculateTotalWeight();
         return typeBarBlock;
     }
