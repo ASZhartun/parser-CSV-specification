@@ -64,4 +64,9 @@ public class ServiceConfiguration {
         return new SpecPrinter();
     }
 
+    @Bean("typeSetter")
+    @Scope("singleton")
+    public TypeSetter getTypeSetter() {
+        return new TypeSetter();
+    }
 }
