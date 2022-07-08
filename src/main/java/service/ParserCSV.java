@@ -117,12 +117,35 @@ public class ParserCSV {
      * @return да, если имеет.
      */
     private boolean lineHasStructureName(Line line) {
+        if (titleIsWrappedQuotes(line)) {
+            line.setName(deleteQuotes(line.getName()));
+        }
         if (isEmptyAroundPotentialStructureName(line)) {
             if (isNotStandardTitles(line)) {
                 return startedWithBigLetter(line);
             }
         }
         return false;
+    }
+
+    /**
+     * ”дал€ет внешние ковычки
+     *
+     * @param name
+     * @return строка без ковычек
+     */
+    private String deleteQuotes(String name) {
+        return name.substring(1, name.length() - 1);
+    }
+
+    /**
+     * ѕровер€ет начинаетс€ ли строка с ковычек (обернута ли строка в ковычки)
+     *
+     * @param line строка таблицы
+     * @return true/false
+     */
+    private boolean titleIsWrappedQuotes(Line line) {
+        return line.getName().indexOf("\"") == 0;
     }
 
     /**
@@ -193,7 +216,7 @@ public class ParserCSV {
      * @return массив строк, описывающий бетон
      */
     private String parseBlockConcreteDefinition(BlockTable block) {
-        String definition="";
+        String definition = "";
         int indexConcrete = getIndexOfMaterialsPart(block) + 1;
         final ArrayList<Line> lines = block.getLines();
         if (!lines.get(indexConcrete).getName().equals(" ")) {
@@ -215,6 +238,10 @@ public class ParserCSV {
         final ArrayList<RebarMesh> rebarMeshes = new ArrayList<>();
         final int downEdgeOfPositions = getIndexOfMaterialsPart(block);
         final ArrayList<Line> lines = block.getLines();
+        final int indexDetails = getIndexOfDetailsPart(block) + 1;
+        if (lines.get(indexDetails).getQuantity().indexOf("\"") == 0) {
+            cleanLinesFromQuotes(lines);
+        }
         for (int i = 1; i < downEdgeOfPositions; i++) {
             final Line line = lines.get(i);
             if (line.getDescription().equals("√ќ—“ 23279-2012")) {
@@ -227,6 +254,32 @@ public class ParserCSV {
         }
         structure.setPositions(positionBars);
         structure.setRebarMeshes(rebarMeshes);
+    }
+
+    /**
+     * ¬озвращает индекс первой арматурной позиции
+     * @param block таблица блока
+     * @return интовый индекс
+     */
+    private int getIndexOfDetailsPart(BlockTable block) {
+        final ArrayList<Line> lines = block.getLines();
+        for (int i = 0; i < lines.size(); i++) {
+            if (lines.get(i).getName().equals("ƒетали")) return i;
+        }
+        return 0;
+    }
+
+    /**
+     * „истит данные полей в строке таблицы от ковычек (специфика автокада)
+     *
+     * @param lines строки в таблице
+     */
+    private void cleanLinesFromQuotes(ArrayList<Line> lines) {
+        lines.stream().filter((line -> !line.getQuantity().equals(" ")))
+                .forEach((item) -> {
+            item.setName(item.getName().substring(1, item.getName().length() - 1));
+            item.setQuantity(item.getQuantity().substring(1, item.getName().length() - 1));
+        });
     }
 
     /**
@@ -363,6 +416,10 @@ public class ParserCSV {
      * @return последнее слово из наименовани€
      */
     private String parseBlockTitle(BlockTable block) {
+        if (block.getLines().get(0).getName().indexOf("\"") == 0) {
+            block.getLines().get(0).setName(block.getLines().get(0).getName().substring(1,
+                    block.getLines().get(0).getName().length() - 1));
+        }
         final String name = block.getLines().get(0).getName();
         final String[] s = name.split(" ");
         return s[s.length - 1];
