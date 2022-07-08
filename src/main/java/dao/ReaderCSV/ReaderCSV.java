@@ -15,6 +15,7 @@ import java.util.regex.Pattern;
 public class ReaderCSV {
     private String pathCSV;
     private String pathFolder;
+    private String headings;
     private final ArrayList<String> content = new ArrayList<>();
 
     public ReaderCSV() {
@@ -36,6 +37,7 @@ public class ReaderCSV {
         } catch (IOException e) {
             System.out.println("Line is not found");
         }
+        headings = "" + content.get(0) + "\n" + content.get(1)+"\n";
     }
 
     public String getPathFolder(String path) {
@@ -66,5 +68,13 @@ public class ReaderCSV {
             group = matcher.group(1);
         }
         this.pathFolder = group;
+    }
+
+    public String getHeadings() {
+        return headings;
+    }
+
+    public void setHeadings(String headings) {
+        this.headings = headings;
     }
 }
