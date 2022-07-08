@@ -32,15 +32,13 @@ public class BillContent {
                 billBlocks.add(new TypeBarBillBlock(block.getBarType()));
             });
         });
-        cleanBlocks(billBlocks);
+
     }
 
     /**
      * Чистит блоки от нулевых позиций
-     *
-     * @param billBlocks множество блоков со значениями весов всех структур
      */
-    private void cleanBlocks(TreeSet<TypeBarBillBlock> billBlocks) {
+    private void cleanBlocks() {
         billBlocks.forEach(this::clean);
     }
 
@@ -79,7 +77,26 @@ public class BillContent {
                 fillCommonBillMapBy(barType, diameterPositions, findIndexOf(structure.getTitle()));
             });
         });
+        cleanBlocks();
+        roundBlockWeightValues();
+    }
 
+    /**
+     * Округляет до двух знаков после запятой веса в карте.
+     */
+    private void roundBlockWeightValues() {
+        billBlocks.forEach(this::round);
+    }
+
+    /**
+     * Округляет вес текущего диаметра до двух знаков после запятой.
+     *
+     * @param typeBarBillBlock блок содержащий диаметры и их веса для всех позиций.
+     */
+    private void round(TypeBarBillBlock typeBarBillBlock) {
+        typeBarBillBlock.getDiameterPosition().forEach((key, value) -> value.forEach((weight) ->
+                weight = Double.parseDouble(String.format("%.2f", weight).replaceAll(",", "."))
+        ));
     }
 
     /**
@@ -120,6 +137,8 @@ public class BillContent {
         columns += billBlocks.stream().mapToInt((item) -> item.getDiameterPosition().size()).sum();
         //колонки под "Итого" по каждому блоку
         columns += billBlocks.size();
+        //колонка "Всего"
+        columns++;
         //количество колонок диаметров для каждого блока
         final ArrayList<Integer> blockSizes = new ArrayList<>();
         billBlocks.forEach((item) -> blockSizes.add(item.getDiameterPosition().size()));
@@ -129,63 +148,27 @@ public class BillContent {
     }
 
     /**
-     * Возвращает строки таблицы с диаметрами, значениями весов всех структур.
+     * Создает первые две строки ведомости (неизменяемые).
      *
-     * @param blockSizes список размеров арматурных блоков
-     * @param columns    число колонок ведомости
-     * @return строка-представление данных по всем структурам
+     * @param columns количество колонок ведомости
+     * @return строковое представление первых двух строк таблицы
      */
-    private String createContent(ArrayList<Integer> blockSizes, int columns) {
-        final StringBuilder content = new StringBuilder();
-        for (int i = 0; i < structureTitles.size(); i++) {
-            String title = structureTitles.get(i);
-            content.append(title).append(";");
-            for (TypeBarBillBlock item :
-                    billBlocks) {
-                content.append(getStringFromDiametersOf(item, i))
-                        .append(getTotalWeightFromCurrentBlock(item, i))
-                        .append(";");
+    private String createStaticTitle(int columns) {
+        final StringBuilder staticHead = new StringBuilder();
+        for (int i = 0; i < billBlocks.size(); i++) {
+            if (i == 0) {
+                staticHead.append("Марка элемента;").append("Изделия арматурные");
+                staticHead.append(addEmptyCellsWith(columns - 3, " ;"));
+                staticHead.append("Всего;\n");
             }
-            content.append("\n");
+            if (i == 1) {
+                staticHead.append(" ;");
+                staticHead.append("Арматура класса");
+                staticHead.append(addEmptyCellsWith(columns - 2, " ;"));
+                staticHead.append('\n');
+            }
         }
-        return content.toString();
-    }
-
-    /**
-     * Возвращает суммарное значение весов арматуры структуры текущего арматурного блока в виде строки.
-     *
-     * @param item  арматурный блок
-     * @param index порядковый номер структуры ведомости
-     * @return строка суммарного веса
-     */
-    private String getTotalWeightFromCurrentBlock(TypeBarBillBlock item, int index) {
-        return String.valueOf(
-                item
-                        .getDiameterPosition()
-                        .values()
-                        .stream()
-                        .mapToDouble(doubles -> doubles.get(index)).sum()
-        );
-    }
-
-    /**
-     * Возвращает строковое представление весов по всем диаметрам для текущей структуры
-     * в пределах текущего блока.
-     *
-     * @param item  арматурный блок ведомости
-     * @param index порядковый номер структуры в ведомости
-     * @return строка
-     */
-    private String getStringFromDiametersOf(TypeBarBillBlock item, int index) {
-        final StringBuilder structureBlockLine = new StringBuilder();
-        final HashMap<Integer, ArrayList<Double>> diameterPosition = item.getDiameterPosition();
-        final Set<Map.Entry<Integer, ArrayList<Double>>> diameters = diameterPosition.entrySet();
-        for (Map.Entry<Integer, ArrayList<Double>> diameterWithValue :
-                diameters) {
-            final ArrayList<Double> value = diameterWithValue.getValue();
-            structureBlockLine.append(value.get(index)).append(";");
-        }
-        return structureBlockLine.toString();
+        return staticHead.toString();
     }
 
     /**
@@ -205,7 +188,7 @@ public class BillContent {
                     blockTitle
                             .append(title)
                             .append(";")
-                            .append(addEmptyCellsWith(item.getDiameterPosition().size() + 1, " ;"));
+                            .append(addEmptyCellsWith(item.getDiameterPosition().size(), " ;"));
                 });
                 blockTitle.append(" ;\n");
             }
@@ -215,36 +198,94 @@ public class BillContent {
                     blockTitle
                             .append("СТБ 1704-2012")
                             .append(";")
-                            .append(addEmptyCellsWith(item.getDiameterPosition().size() + 1, " ;"));
+                            .append(addEmptyCellsWith(item.getDiameterPosition().size(), " ;"));
                 });
                 blockTitle.append(" ;\n");
             }
         }
+        blockTitle.append(addDiameterTitles());
         return blockTitle.toString();
     }
 
     /**
-     * Создает первые две строки ведомости (неизменяемые).
-     *
-     * @param columns количество колонок ведомости
-     * @return строковое представление первых двух строк таблицы
+     * Добавляет сигнатуру диаметров в шапку ведомости.
+     * @return строку-представление заголовка диаметров
      */
-    private String createStaticTitle(int columns) {
-        final StringBuilder staticHead = new StringBuilder();
-        for (int i = 0; i < billBlocks.size(); i++) {
-            if (i == 0) {
-                staticHead.append("Марка элемента").append("Изделия арматурные");
-                staticHead.append(addEmptyCellsWith(columns - 3, " ;"));
-                staticHead.append("Всего;\n");
+    private String addDiameterTitles() {
+        final StringBuilder diameters = new StringBuilder();
+        diameters.append(";");
+        billBlocks.forEach((block) -> {
+            block.getDiameterPosition().keySet().forEach((key) -> {
+                diameters.append(key).append(";");
+            });
+            diameters.append("Итого;");
+        });
+        diameters.append(" ;\n");
+        return diameters.toString();
+    }
+
+    /**
+     * Возвращает строки таблицы с диаметрами, значениями весов всех структур.
+     *
+     * @param blockSizes список размеров арматурных блоков
+     * @param columns    число колонок ведомости
+     * @return строка-представление данных по всем структурам
+     */
+    private String createContent(ArrayList<Integer> blockSizes, int columns) {
+        final StringBuilder content = new StringBuilder();
+        for (int i = 0; i < structureTitles.size(); i++) {
+            String title = structureTitles.get(i);
+            content.append(title).append(";");
+            for (TypeBarBillBlock item :
+                    billBlocks) {
+                content.append(getStringFromDiametersOf(item, i))
+                        .append("=")
+                        .append(getTotalWeightFromCurrentBlock(item, i))
+                        .append(";");
             }
-            if (i == 1) {
-                staticHead.append(" ;");
-                staticHead.append("Арматура класса");
-                staticHead.append(addEmptyCellsWith(columns - 2, " ;"));
-                staticHead.append('\n');
-            }
+            content.append("=");
+            content.append(String.format("%2f",calculatedStructures.get(i).getTotalWeight()));
+            content.append(";\n");
         }
-        return staticHead.toString();
+        return content.toString();
+    }
+
+    /**
+     * Возвращает суммарное значение весов арматуры структуры текущего арматурного блока в виде строки.
+     *
+     * @param item  арматурный блок
+     * @param index порядковый номер структуры ведомости
+     * @return строка суммарного веса
+     */
+    private String getTotalWeightFromCurrentBlock(TypeBarBillBlock item, int index) {
+        return String.valueOf(
+                item
+                        .getDiameterPosition()
+                        .values()
+                        .stream()
+                        .mapToDouble(doubles -> doubles.get(index)).sum()
+        ).replaceAll("\\.", ",");
+    }
+
+    /**
+     * Возвращает строковое представление весов по всем диаметрам для текущей структуры
+     * в пределах текущего блока.
+     *
+     * @param item  арматурный блок ведомости
+     * @param index порядковый номер структуры в ведомости
+     * @return строка
+     */
+    private String getStringFromDiametersOf(TypeBarBillBlock item, int index) {
+        final StringBuilder structureBlockLine = new StringBuilder();
+        final HashMap<Integer, ArrayList<Double>> diameterPosition = item.getDiameterPosition();
+        final Set<Map.Entry<Integer, ArrayList<Double>>> diameters = diameterPosition.entrySet();
+        for (Map.Entry<Integer, ArrayList<Double>> diameterWithValue :
+                diameters) {
+            final ArrayList<Double> value = diameterWithValue.getValue();
+            structureBlockLine.append("=");
+            structureBlockLine.append(String.format("%2f",value.get(index))).append(";");
+        }
+        return structureBlockLine.toString();
     }
 
     /**

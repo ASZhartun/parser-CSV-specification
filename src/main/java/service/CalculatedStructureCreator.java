@@ -66,7 +66,7 @@ public class CalculatedStructureCreator {
                 .collect(Collectors.toList());
         final TypeBarBlock typeBarBlock = new TypeBarBlock();
         typeBarBlock.setBarType(type);
-        typeBarBlock.setDiameterPositionWeights(createBarMapDiameterFrom(allPositionsBar));
+        typeBarBlock.setDiameterPositionWeights(createBarMapDiameterFrom(new ArrayList<>(collect)));
         typeBarBlock.calculateTotalWeight();
         return typeBarBlock;
     }
@@ -80,7 +80,7 @@ public class CalculatedStructureCreator {
     private HashMap<Integer, Double> createBarMapDiameterFrom(ArrayList<PositionBar> allPositionsBar) {
         final HashMap<Integer, Double> map = new HashMap<>();
         allPositionsBar
-                .forEach((item) -> map.merge(item.getDiameter(), item.getWeight(), Double::sum));
+                .forEach((item) -> map.merge(item.getDiameter(), item.getWeight() * item.getQuantity(), Double::sum));
         return map;
     }
 
