@@ -7,9 +7,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 
 public class ParserCSV {
+    public static void main(String[] args) {
+        String sample = "\"12-5650\"\t \t12 S500 СТБ 1704-2012, L=5650\t\"116\"\t\"5,02\"\t ";
+        sample = sample.replaceAll("\"", "");
+        System.out.println(sample);
+    }
+
     /**
      * Вспомогательный парсер арматурных сеток по ГОСТ 23279-2012.
      */
@@ -234,14 +241,11 @@ public class ParserCSV {
      * @param block таблица структуры.
      */
     private void parseBlockBarsPositions(BlockTable block, Structure structure) {
+        removeWrappingQuotes(block);
         final ArrayList<PositionBar> positionBars = new ArrayList<>();
         final ArrayList<RebarMesh> rebarMeshes = new ArrayList<>();
         final int downEdgeOfPositions = getIndexOfMaterialsPart(block);
         final ArrayList<Line> lines = block.getLines();
-        final int indexDetails = getIndexOfDetailsPart(block) + 1;
-        if (lines.get(indexDetails).getQuantity().indexOf("\"") == 0) {
-            cleanLinesFromQuotes(lines);
-        }
         for (int i = 1; i < downEdgeOfPositions; i++) {
             final Line line = lines.get(i);
             if (line.getDescription().equals("ГОСТ 23279-2012")) {
@@ -257,30 +261,21 @@ public class ParserCSV {
     }
 
     /**
-     * Возвращает индекс первой арматурной позиции
-     * @param block таблица блока
-     * @return интовый индекс
-     */
-    private int getIndexOfDetailsPart(BlockTable block) {
-        final ArrayList<Line> lines = block.getLines();
-        for (int i = 0; i < lines.size(); i++) {
-            if (lines.get(i).getName().equals("Детали")) return i;
-        }
-        return 0;
-    }
-
-    /**
-     * Чистит данные полей в строке таблицы от ковычек (специфика автокада)
+     * Удаляет ковычки, которые оборачивают значения в ячейках при чтении из csv файла полученного из ранней версии автокад.
      *
-     * @param lines строки в таблице
+     * @param block блок со структурой
      */
-    private void cleanLinesFromQuotes(ArrayList<Line> lines) {
-        lines.stream().filter((line -> !line.getQuantity().equals(" ")))
-                .forEach((item) -> {
-            item.setName(item.getName().substring(1, item.getName().length() - 1));
-            item.setQuantity(item.getQuantity().substring(1, item.getName().length() - 1));
+    private void removeWrappingQuotes(BlockTable block) {
+        block.getLines().stream().forEach((item) -> {
+            item.setPos(item.getPos().replaceAll("\"", ""));
+            item.setDescription(item.getDescription().replaceAll("\"", ""));
+            item.setName(item.getName().replaceAll("\"", ""));
+            item.setQuantity(item.getQuantity().replaceAll("\"", ""));
+            item.setWeight(item.getWeight().replaceAll("\"", ""));
+            item.setNote(item.getNote().replaceAll("\"", ""));
         });
     }
+
 
     /**
      * Парсит строку с описанием позиции, создает и возвращает объект полученной позиции.

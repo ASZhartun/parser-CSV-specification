@@ -190,25 +190,25 @@ public class BillContent {
                             .append(";")
                             .append(addEmptyCellsWith(item.getDiameterPosition().size(), " ;"));
                 });
-                blockTitle.append(" ;\n");
-            }
-            if (i == 1) {
-                billBlocks.forEach((item) -> {
-                    final String title = item.getBarType();
-                    blockTitle
-                            .append("СТБ 1704-2012")
-                            .append(";")
-                            .append(addEmptyCellsWith(item.getDiameterPosition().size(), " ;"));
-                });
-                blockTitle.append(" ;\n");
+                blockTitle.append(" ;");
             }
         }
+        blockTitle.append("\n");
+        blockTitle.append(" ;");
+
+        billBlocks.forEach((item) -> blockTitle
+                .append("СТБ 1704-2012")
+                .append(";")
+                .append(addEmptyCellsWith(item.getDiameterPosition().size(), " ;")));
+
+        blockTitle.append(" ;\n");
         blockTitle.append(addDiameterTitles());
         return blockTitle.toString();
     }
 
     /**
      * Добавляет сигнатуру диаметров в шапку ведомости.
+     *
      * @return строку-представление заголовка диаметров
      */
     private String addDiameterTitles() {
@@ -244,7 +244,7 @@ public class BillContent {
                         .append(";");
             }
             content.append("=");
-            content.append(String.format("%2f",calculatedStructures.get(i).getTotalWeight()));
+            content.append(String.format("%2f", calculatedStructures.get(i).getTotalWeight()));
             content.append(";\n");
         }
         return content.toString();
@@ -283,7 +283,7 @@ public class BillContent {
                 diameters) {
             final ArrayList<Double> value = diameterWithValue.getValue();
             structureBlockLine.append("=");
-            structureBlockLine.append(String.format("%2f",value.get(index))).append(";");
+            structureBlockLine.append(String.format("%2f", value.get(index))).append(";");
         }
         return structureBlockLine.toString();
     }
