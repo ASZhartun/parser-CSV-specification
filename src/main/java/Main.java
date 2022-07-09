@@ -10,6 +10,6 @@ public class Main {
         context.register(ServiceConfiguration.class);
         context.refresh();
         final Operator operator = (Operator)context.getBean("operator");
-        operator.doWork("D:\\portfolio\\parser-CSV-specification\\src\\main\\resources\\JanTable.csv");
+        operator.doWork(args[0]);
     }
 }
