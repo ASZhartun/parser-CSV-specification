@@ -19,8 +19,7 @@ public class SpecPrinter {
     }
 
     private String makeSpecHeader() {
-        return readerCSV.getContent().get(0) +
-                readerCSV.getContent().get(1);
+        return readerCSV.getHeadings();
     }
 
     public ReaderCSV getReaderCSV() {
@@ -106,7 +105,7 @@ public class SpecPrinter {
                 .append(" ;")
                 .append("Материалы;")
                 .append(" ;")
-                .append(" ;");
+                .append(" ;\n");
         return title.toString();
     }
 
@@ -140,8 +139,8 @@ public class SpecPrinter {
                 .append(item.toString())
                 .append(";")
                 .append(item.getQuantity())
-                .append(";")
-                .append(item.getWeight())
+                .append(";=")
+                .append(String.format("%2f", item.getWeight()))
                 .append(";")
                 .append(" ;\n");
         return line.toString();
@@ -158,7 +157,7 @@ public class SpecPrinter {
                 .append(" ;")
                 .append("Детали;")
                 .append(" ;")
-                .append(" ;");
+                .append(" ;\n");
         return title.toString();
     }
 
@@ -204,8 +203,8 @@ public class SpecPrinter {
                 .append(rebarMesh.getStartNaming())
                 .append(";")
                 .append(rebarMesh.getQuantity())
-                .append(";")
-                .append(rebarMesh.getCross().getWeight() + rebarMesh.getBase().getWeight())
+                .append(";=")
+                .append(String.format("%2f", rebarMesh.getCross().getWeight() + rebarMesh.getBase().getWeight()))
                 .append(" ;\n");
         return line.toString();
     }
@@ -229,7 +228,7 @@ public class SpecPrinter {
         return ";" +
                 ";" +
                 structure.getTitle() +
-                ";" +
+                ";" + ";" +
                 ";\n";
     }
 

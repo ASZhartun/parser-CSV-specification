@@ -7,9 +7,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 
 public class ParserCSV {
+    public static void main(String[] args) {
+        String sample = "\"12-5650\"\t \t12 S500 СТБ 1704-2012, L=5650\t\"116\"\t\"5,02\"\t ";
+        sample = sample.replaceAll("\"", "");
+        System.out.println(sample);
+    }
+
     /**
      * Вспомогательный парсер арматурных сеток по ГОСТ 23279-2012.
      */
@@ -117,12 +124,35 @@ public class ParserCSV {
      * @return да, если имеет.
      */
     private boolean lineHasStructureName(Line line) {
+        if (titleIsWrappedQuotes(line)) {
+            line.setName(deleteQuotes(line.getName()));
+        }
         if (isEmptyAroundPotentialStructureName(line)) {
             if (isNotStandardTitles(line)) {
                 return startedWithBigLetter(line);
             }
         }
         return false;
+    }
+
+    /**
+     * Удаляет внешние ковычки
+     *
+     * @param name
+     * @return строка без ковычек
+     */
+    private String deleteQuotes(String name) {
+        return name.substring(1, name.length() - 1);
+    }
+
+    /**
+     * Проверяет начинается ли строка с ковычек (обернута ли строка в ковычки)
+     *
+     * @param line строка таблицы
+     * @return true/false
+     */
+    private boolean titleIsWrappedQuotes(Line line) {
+        return line.getName().indexOf("\"") == 0;
     }
 
     /**
@@ -193,7 +223,7 @@ public class ParserCSV {
      * @return массив строк, описывающий бетон
      */
     private String parseBlockConcreteDefinition(BlockTable block) {
-        String definition="";
+        String definition = "";
         int indexConcrete = getIndexOfMaterialsPart(block) + 1;
         final ArrayList<Line> lines = block.getLines();
         if (!lines.get(indexConcrete).getName().equals(" ")) {
@@ -211,6 +241,7 @@ public class ParserCSV {
      * @param block таблица структуры.
      */
     private void parseBlockBarsPositions(BlockTable block, Structure structure) {
+        removeWrappingQuotes(block);
         final ArrayList<PositionBar> positionBars = new ArrayList<>();
         final ArrayList<RebarMesh> rebarMeshes = new ArrayList<>();
         final int downEdgeOfPositions = getIndexOfMaterialsPart(block);
@@ -228,6 +259,23 @@ public class ParserCSV {
         structure.setPositions(positionBars);
         structure.setRebarMeshes(rebarMeshes);
     }
+
+    /**
+     * Удаляет ковычки, которые оборачивают значения в ячейках при чтении из csv файла полученного из ранней версии автокад.
+     *
+     * @param block блок со структурой
+     */
+    private void removeWrappingQuotes(BlockTable block) {
+        block.getLines().stream().forEach((item) -> {
+            item.setPos(item.getPos().replaceAll("\"", ""));
+            item.setDescription(item.getDescription().replaceAll("\"", ""));
+            item.setName(item.getName().replaceAll("\"", ""));
+            item.setQuantity(item.getQuantity().replaceAll("\"", ""));
+            item.setWeight(item.getWeight().replaceAll("\"", ""));
+            item.setNote(item.getNote().replaceAll("\"", ""));
+        });
+    }
+
 
     /**
      * Парсит строку с описанием позиции, создает и возвращает объект полученной позиции.
@@ -363,6 +411,10 @@ public class ParserCSV {
      * @return последнее слово из наименования
      */
     private String parseBlockTitle(BlockTable block) {
+        if (block.getLines().get(0).getName().indexOf("\"") == 0) {
+            block.getLines().get(0).setName(block.getLines().get(0).getName().substring(1,
+                    block.getLines().get(0).getName().length() - 1));
+        }
         final String name = block.getLines().get(0).getName();
         final String[] s = name.split(" ");
         return s[s.length - 1];
