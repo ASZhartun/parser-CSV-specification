@@ -9,7 +9,9 @@ public class Main {
         context.register(EntityConfiguration.class);
         context.register(ServiceConfiguration.class);
         context.refresh();
-        final Operator operator = (Operator)context.getBean("operator");
+        final Operator operator = (Operator) context.getBean("operator");
+//        String path = "E:\\projects\\parser-CSV-specification\\src\\main\\resources\\table.csv";
+//        operator.doWork(path);
         operator.doWork(args[0]);
     }
 }
