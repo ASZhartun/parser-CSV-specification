@@ -175,7 +175,8 @@ public class ParserCSV {
     private boolean isNotStandardTitles(Line line) {
         return !line.getName().equals("Материалы") &&
                 !line.getName().equals("Сборочные единицы") &&
-                !line.getName().equals("Детали");
+                !line.getName().equals("Детали") &&
+        !line.getName().equals("Изделия закладные");
     }
 
     /**
