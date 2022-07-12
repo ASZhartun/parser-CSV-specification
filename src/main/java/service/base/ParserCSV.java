@@ -250,7 +250,10 @@ public class ParserCSV {
                 final RebarMesh rebarMesh = rebarMeshParser.build(line.getName(), line.getQuantity());
                 rebarMeshes.add(rebarMesh);
             } else if (existsAtLibrary(line.getName())) {
-                structure.getRebarCages().add(librarian.getItemBy(line.getName()));
+                final RebarCage item = librarian.getItemBy(line.getName());
+                item.setQuantity(Integer.parseInt(line.getQuantity()));
+                item.setDoc(line.getDescription());
+                structure.getRebarCages().add(item);
             }
             else if (isPosition(line.getName())) {
                 final PositionBar temp = parsePositionBar(line);

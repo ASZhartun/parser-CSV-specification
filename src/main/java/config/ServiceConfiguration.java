@@ -1,6 +1,7 @@
 package config;
 
 import dao.ReaderCSV;
+import dao.ReaderCSVExtraUnit;
 import dao.WriterCSV;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -81,5 +82,11 @@ public class ServiceConfiguration {
     @Scope("singleton")
     public ParserUnitCSV getParserUnitCSV() {
         return new ParserUnitCSV();
+    }
+
+    @Bean("readerCSVExtraUnit")
+    @Scope("singleton")
+    public ReaderCSVExtraUnit getReaderCSVExtraUnit() {
+        return new ReaderCSVExtraUnit();
     }
 }

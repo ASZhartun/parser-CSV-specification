@@ -6,6 +6,7 @@ import entities.RebarCage;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -24,14 +25,16 @@ public class ParserUnitCSV {
 
     /**
      * Парсит таблицу КЖ.И и возвращает объект каркаса.
+     *
      * @return объект каркаса
      */
     public RebarCage parse() {
         final RebarCage rebarCage = new RebarCage();
         rebarCage.setTitle(content.get(0));
-        for (int i = 1; i < content.size(); i++) {
+        for (int i = 2; i < content.size(); i++) {
             final String[] split = content.get(i).split(";");
-            Arrays.stream(split).forEach((item) -> item = deleteQuotes(item));
+//            Arrays.stream(split).forEach((item) -> item = deleteQuotes(item));
+            Arrays.setAll(split, (z) -> split[z] = deleteQuotes(split[z]));
             final Line line = new Line(split[0], " ", split[1], split[2]);
             if (line.getName().equals(" ")) {
                 continue;
@@ -45,6 +48,7 @@ public class ParserUnitCSV {
     /**
      * Парсит строку csv таблицы КЖ.И. Вычленяет диаметр, тип арматуры, длину, количество. Создает на базе этих
      * данных PositionBar и возвращает этот объект.
+     *
      * @param line текущая строка csv таблицы КЖ.И
      * @return PositionBar на базе строки
      */
@@ -81,13 +85,13 @@ public class ParserUnitCSV {
 
     /**
      * Удаляет ковычки вокруг контента ячеек csv таблицы
+     *
      * @param item строка с ковычками
      * @return строка без ковычек
      */
     private String deleteQuotes(String item) {
         return item.replaceAll("\"", "");
     }
-
 
 
     public ArrayList<String> getContent() {

@@ -1,9 +1,13 @@
 package service.extra;
 
+import config.EntityConfiguration;
+import config.ServiceConfiguration;
 import dao.ReaderCSVExtraUnit;
 import entities.ExtraUnitStorage;
 import entities.RebarCage;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import java.util.ArrayList;
 
@@ -16,6 +20,15 @@ import java.util.ArrayList;
  * </ul>
  */
 public class Librarian {
+
+    public static void main(String[] args) {
+        final AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext();
+        ctx.register(ServiceConfiguration.class, EntityConfiguration.class);
+        ctx.refresh();
+        final Librarian librarian = (Librarian)ctx.getBean("librarian");
+        librarian.addNewRebarCageFrom("E:\\projects\\parser-CSV-specification\\src\\main\\resources\\lib\\Каркас КР1.csv");
+        System.out.println();
+    }
     /**
      * Модуль для чтения из csv файла
      */
@@ -62,7 +75,7 @@ public class Librarian {
     public ReaderCSVExtraUnit getReaderCSVExtraUnit() {
         return readerCSVExtraUnit;
     }
-
+@Autowired
     public void setReaderCSVExtraUnit(ReaderCSVExtraUnit readerCSVExtraUnit) {
         this.readerCSVExtraUnit = readerCSVExtraUnit;
     }
