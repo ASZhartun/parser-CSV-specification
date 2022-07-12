@@ -6,6 +6,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 import service.base.*;
+import service.extra.Librarian;
+import service.extra.ParserUnitCSV;
 
 @Configuration
 public class ServiceConfiguration {
@@ -67,5 +69,17 @@ public class ServiceConfiguration {
     @Scope("singleton")
     public TypeSetter getTypeSetter() {
         return new TypeSetter();
+    }
+
+    @Bean("librarian")
+    @Scope("singleton")
+    public Librarian getLibrarian() {
+        return new Librarian();
+    }
+
+    @Bean("parserUnitCSV")
+    @Scope("singleton")
+    public ParserUnitCSV getParserUnitCSV() {
+        return new ParserUnitCSV();
     }
 }

@@ -22,6 +22,10 @@ public class ParserUnitCSV {
         return parse();
     }
 
+    /**
+     * Парсит таблицу КЖ.И и возвращает объект каркаса.
+     * @return объект каркаса
+     */
     public RebarCage parse() {
         final RebarCage rebarCage = new RebarCage();
         rebarCage.setTitle(content.get(0));
@@ -38,6 +42,12 @@ public class ParserUnitCSV {
         return rebarCage;
     }
 
+    /**
+     * Парсит строку csv таблицы КЖ.И. Вычленяет диаметр, тип арматуры, длину, количество. Создает на базе этих
+     * данных PositionBar и возвращает этот объект.
+     * @param line текущая строка csv таблицы КЖ.И
+     * @return PositionBar на базе строки
+     */
     private PositionBar parseLine(Line line) {
         final PositionBar positionBar = new PositionBar();
         try {
@@ -69,6 +79,11 @@ public class ParserUnitCSV {
         return positionBar;
     }
 
+    /**
+     * Удаляет ковычки вокруг контента ячеек csv таблицы
+     * @param item строка с ковычками
+     * @return строка без ковычек
+     */
     private String deleteQuotes(String item) {
         return item.replaceAll("\"", "");
     }

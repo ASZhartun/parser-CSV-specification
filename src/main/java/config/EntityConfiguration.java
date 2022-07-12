@@ -36,4 +36,15 @@ public class EntityConfiguration {
         return new RebarMesh();
     }
 
+    @Bean("rebarCage")
+    @Scope("prototype")
+    public RebarCage getRebarCage() {
+        return new RebarCage();
+    }
+
+    @Bean("extraUnitStorage")
+    @Scope("singleton")
+    public ExtraUnitStorage getExtraUnitStorage() {
+        return new ExtraUnitStorage();
+    }
 }

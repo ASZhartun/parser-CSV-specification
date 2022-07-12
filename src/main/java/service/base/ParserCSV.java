@@ -3,6 +3,7 @@ package service.base;
 import entities.*;
 import exceptions.CreatingTableException;
 import org.springframework.beans.factory.annotation.Autowired;
+import service.extra.Librarian;
 
 import java.util.ArrayList;
 import java.util.regex.Matcher;
@@ -10,11 +11,7 @@ import java.util.regex.Pattern;
 
 
 public class ParserCSV {
-    public static void main(String[] args) {
-        String sample = "\"12-5650\"\t \t12 S500 СТБ 1704-2012, L=5650\t\"116\"\t\"5,02\"\t ";
-        sample = sample.replaceAll("\"", "");
-        System.out.println(sample);
-    }
+    private Librarian librarian;
 
     /**
      * Вспомогательный парсер арматурных сеток по ГОСТ 23279-2012.
@@ -252,7 +249,10 @@ public class ParserCSV {
             if (line.getDescription().equals("ГОСТ 23279-2012")) {
                 final RebarMesh rebarMesh = rebarMeshParser.build(line.getName(), line.getQuantity());
                 rebarMeshes.add(rebarMesh);
-            } else if (isPosition(line.getName())) {
+            } else if (existsAtLibrary(line.getName())) {
+                structure.getRebarCages().add(librarian.getItemBy(line.getName()));
+            }
+            else if (isPosition(line.getName())) {
                 final PositionBar temp = parsePositionBar(line);
                 positionBars.add(temp);
             }
@@ -262,12 +262,23 @@ public class ParserCSV {
     }
 
     /**
+     * Проверяет существование пользовательского каркаса в библиотеке по указнному имени
+     * @param name имя каркаса
+     * @return true/false
+     */
+    private boolean existsAtLibrary(String name) {
+        final RebarCage rebarCage = new RebarCage();
+        rebarCage.setTitle(name);
+        return librarian.getExtraUnitStorage().getExtraUnits().contains(rebarCage);
+    }
+
+    /**
      * Удаляет ковычки, которые оборачивают значения в ячейках при чтении из csv файла полученного из ранней версии автокад.
      *
      * @param block блок со структурой
      */
     private void removeWrappingQuotes(BlockTable block) {
-        block.getLines().stream().forEach((item) -> {
+        block.getLines().forEach((item) -> {
             item.setPos(item.getPos().replaceAll("\"", ""));
             item.setDescription(item.getDescription().replaceAll("\"", ""));
             item.setName(item.getName().replaceAll("\"", ""));
@@ -436,5 +447,14 @@ public class ParserCSV {
     @Autowired
     public void setRebarMeshParser(RebarMeshParser rebarMeshParser) {
         this.rebarMeshParser = rebarMeshParser;
+    }
+
+    public Librarian getLibrarian() {
+        return librarian;
+    }
+
+    @Autowired
+    public void setLibrarian(Librarian librarian) {
+        this.librarian = librarian;
     }
 }

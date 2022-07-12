@@ -3,6 +3,7 @@ package service.extra;
 import dao.ReaderCSVExtraUnit;
 import entities.ExtraUnitStorage;
 import entities.RebarCage;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 
@@ -30,6 +31,7 @@ public class Librarian {
 
     /**
      * Добавляет новую КЖ.И в хранилище.
+     *
      * @param path путь csv файла, содержащего таблицу КЖ.И
      */
     public void addNewRebarCageFrom(String path) {
@@ -40,6 +42,7 @@ public class Librarian {
 
     /**
      * Возвращает объект RebarCage по наименованию.
+     *
      * @param title наименование
      * @return объект RebarCage
      */
@@ -68,7 +71,17 @@ public class Librarian {
         return parserUnitCSV;
     }
 
+    @Autowired
     public void setParserUnitCSV(ParserUnitCSV parserUnitCSV) {
         this.parserUnitCSV = parserUnitCSV;
+    }
+
+    public ExtraUnitStorage getExtraUnitStorage() {
+        return extraUnitStorage;
+    }
+
+    @Autowired
+    public void setExtraUnitStorage(ExtraUnitStorage extraUnitStorage) {
+        this.extraUnitStorage = extraUnitStorage;
     }
 }
