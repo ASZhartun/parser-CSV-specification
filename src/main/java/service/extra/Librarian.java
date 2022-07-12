@@ -38,6 +38,20 @@ public class Librarian {
         extraUnitStorage.addUnit(rebarCage);
     }
 
+    /**
+     * Возвращает объект RebarCage по наименованию.
+     * @param title наименование
+     * @return объект RebarCage
+     */
+    public RebarCage getItemBy(String title) {
+        return extraUnitStorage
+                .getExtraUnits()
+                .stream()
+                .filter((item) -> item.getTitle().equals(title))
+                .findFirst()
+                .orElseGet(RebarCage::new);
+    }
+
     public Librarian() {
 
     }
