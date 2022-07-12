@@ -41,6 +41,10 @@ public class RebarCage {
         return bars.stream().mapToDouble((item) -> item.getWeight() * item.getQuantity()).sum();
     }
 
+    public void refresh() {
+        this.unitWeight = calculateUnitWeight(this.bars);
+    }
+
     public ArrayList<PositionBar> getBars() {
         return bars;
     }

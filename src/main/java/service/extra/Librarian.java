@@ -34,7 +34,7 @@ public class Librarian {
      */
     public void addNewRebarCageFrom(String path) {
         final ArrayList<String> read = readerCSVExtraUnit.read(path);
-        RebarCage rebarCage = getParserUnitCSV().parse(read);
+        RebarCage rebarCage = parserUnitCSV.parse(read);
         extraUnitStorage.addUnit(rebarCage);
     }
 
