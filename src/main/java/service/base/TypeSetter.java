@@ -1,7 +1,5 @@
-package service;
+package service.base;
 
-import dao.ReaderCSV.ReaderCSV;
-import entities.CalculatedStructure;
 import entities.Structure;
 import org.springframework.beans.factory.annotation.Autowired;
 

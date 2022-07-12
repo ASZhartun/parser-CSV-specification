@@ -1,4 +1,4 @@
-package service;
+package service.base;
 
 import entities.*;
 import exceptions.CreatingTableException;
@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 
 public class ParserCSV {
@@ -176,7 +175,8 @@ public class ParserCSV {
         return !line.getName().equals("Материалы") &&
                 !line.getName().equals("Сборочные единицы") &&
                 !line.getName().equals("Детали") &&
-        !line.getName().equals("Изделия закладные");
+        !line.getName().equals("Изделия закладные") &&
+                !line.getName().equals("Сетки");
     }
 
     /**

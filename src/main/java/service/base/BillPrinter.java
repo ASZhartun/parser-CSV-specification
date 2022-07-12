@@ -1,12 +1,10 @@
-package service;
+package service.base;
 
 import entities.BillContent;
 import entities.CalculatedStructure;
 import entities.TypeBarBlock;
 
-import javax.swing.*;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * Класс, который формирует csv таблицу ведомости расхода стали.

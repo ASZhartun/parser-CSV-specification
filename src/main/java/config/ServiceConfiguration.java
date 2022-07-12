@@ -1,12 +1,11 @@
 package config;
 
-import dao.ReaderCSV.ReaderCSV;
-import dao.WriterCSV.WriterCSV;
+import dao.ReaderCSV;
+import dao.WriterCSV;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Controller;
-import service.*;
+import service.base.*;
 
 @Configuration
 public class ServiceConfiguration {
