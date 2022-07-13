@@ -6,12 +6,19 @@ import dao.WriterCSV;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
+import service.Director;
 import service.base.*;
 import service.extra.Librarian;
 import service.extra.ParserUnitCSV;
 
 @Configuration
 public class ServiceConfiguration {
+    @Bean("director")
+    @Scope("singleton")
+    public Director getDirector() {
+        return new Director();
+    }
+
     @Bean("reader")
     @Scope("singleton")
     public ReaderCSV getReaderCSV() {
