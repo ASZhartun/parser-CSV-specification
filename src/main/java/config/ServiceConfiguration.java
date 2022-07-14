@@ -3,6 +3,7 @@ package config;
 import dao.ReaderCSV;
 import dao.ReaderCSVExtraUnit;
 import dao.WriterCSV;
+import gui.TestSimpleGUI;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
@@ -17,6 +18,12 @@ public class ServiceConfiguration {
     @Scope("singleton")
     public Director getDirector() {
         return new Director();
+    }
+
+    @Bean("testSimpleGUI")
+    @Scope("singleton")
+    public TestSimpleGUI getGUI() {
+        return new TestSimpleGUI();
     }
 
     @Bean("reader")
