@@ -17,6 +17,7 @@ public class MainFrame extends JFrame {
     public void init() {
         titlePanel.init();
         this.add(titlePanel);
+        basics.init();
         this.add(basics);
         this.pack();
     }

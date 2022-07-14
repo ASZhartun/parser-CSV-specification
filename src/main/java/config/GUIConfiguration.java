@@ -32,7 +32,6 @@ public class GUIConfiguration {
     public TitlePanel getTitlePanel() {
         final TitlePanel titlePanel = new TitlePanel();
         titlePanel.setBackground(new Color(150, 25, 150));
-//        titlePanel.setMinimumSize(new Dimension(420, 50));
         titlePanel.setBounds(0, 0, 420, 50);
         return titlePanel;
     }
@@ -44,7 +43,7 @@ public class GUIConfiguration {
         jLabel.setHorizontalAlignment(SwingConstants.CENTER);
         jLabel.setText("Утилиты инженера-конструктора");
         jLabel.setVerticalTextPosition(SwingConstants.CENTER);
-        jLabel.setVerticalAlignment(SwingConstants.TOP);
+        jLabel.setVerticalAlignment(SwingConstants.CENTER);
         jLabel.setHorizontalAlignment(SwingConstants.CENTER);
         jLabel.setForeground(new Color(255, 150, 0));
         jLabel.setFont(new Font("gost", Font.BOLD, 24));
@@ -64,7 +63,9 @@ public class GUIConfiguration {
     public CalcSpecButton getButton() {
         final CalcSpecButton calcSpecButton = new CalcSpecButton();
         calcSpecButton.setBackground(new Color(150,150,0));
-        calcSpecButton.setBounds(250, 150, 50,50);
+        calcSpecButton.setBounds(250, 500, 50,50);
+        calcSpecButton.setFont(new Font("gost", Font.BOLD, 18));
+        calcSpecButton.setText("CalcSpec");
         return calcSpecButton;
     }
 }
