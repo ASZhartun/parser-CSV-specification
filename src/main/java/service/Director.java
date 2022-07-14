@@ -3,7 +3,9 @@ package service;
 import config.EntityConfiguration;
 import config.GUIConfiguration;
 import config.ServiceConfiguration;
+import gui.MainMenuFrame;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import service.base.Operator;
 
@@ -15,14 +17,19 @@ public class Director {
         context.register(EntityConfiguration.class, ServiceConfiguration.class, GUIConfiguration.class);
         context.refresh();
         final Director director = (Director) context.getBean("director");
+        director.init();
         director.run();
     }
 
     private Operator operator;
-    private JFrame menu;
+    private MainMenuFrame menu;
 
     public Director() {
 
+    }
+
+    public void init() {
+        menu.init();
     }
 
     public void run() {
@@ -38,12 +45,13 @@ public class Director {
         this.operator = operator;
     }
 
-    public JFrame getMenu() {
+    public MainMenuFrame getMenu() {
         return menu;
     }
 
     @Autowired
-    public void setMenu(JFrame menu) {
+    @Qualifier("menu")
+    public void setMenu(MainMenuFrame menu) {
         this.menu = menu;
     }
 }
