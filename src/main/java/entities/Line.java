@@ -17,6 +17,13 @@ public class Line {
         this.note = note;
     }
 
+    public Line(String pos, String description, String name, String quantity) {
+        this.pos = pos;
+        this.description = description;
+        this.name = name;
+        this.quantity = quantity;
+    }
+
     public Line() {
 
     }

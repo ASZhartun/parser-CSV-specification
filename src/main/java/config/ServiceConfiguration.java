@@ -1,15 +1,31 @@
 package config;
 
-import dao.ReaderCSV.ReaderCSV;
-import dao.WriterCSV.WriterCSV;
+import dao.ReaderCSV;
+import dao.ReaderCSVExtraUnit;
+import dao.WriterCSV;
+import gui.TestSimpleGUI;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Controller;
-import service.*;
+import service.Director;
+import service.base.*;
+import service.extra.Librarian;
+import service.extra.ParserUnitCSV;
 
 @Configuration
 public class ServiceConfiguration {
+    @Bean("director")
+    @Scope("singleton")
+    public Director getDirector() {
+        return new Director();
+    }
+
+    @Bean("testSimpleGUI")
+    @Scope("singleton")
+    public TestSimpleGUI getGUI() {
+        return new TestSimpleGUI();
+    }
+
     @Bean("reader")
     @Scope("singleton")
     public ReaderCSV getReaderCSV() {
@@ -68,5 +84,23 @@ public class ServiceConfiguration {
     @Scope("singleton")
     public TypeSetter getTypeSetter() {
         return new TypeSetter();
+    }
+
+    @Bean("librarian")
+    @Scope("singleton")
+    public Librarian getLibrarian() {
+        return new Librarian();
+    }
+
+    @Bean("parserUnitCSV")
+    @Scope("singleton")
+    public ParserUnitCSV getParserUnitCSV() {
+        return new ParserUnitCSV();
+    }
+
+    @Bean("readerCSVExtraUnit")
+    @Scope("singleton")
+    public ReaderCSVExtraUnit getReaderCSVExtraUnit() {
+        return new ReaderCSVExtraUnit();
     }
 }

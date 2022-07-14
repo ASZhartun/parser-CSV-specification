@@ -1,7 +1,7 @@
 import config.EntityConfiguration;
 import config.ServiceConfiguration;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import service.Operator;
+import service.base.Operator;
 
 public class Main {
     public static void main(String[] args) {

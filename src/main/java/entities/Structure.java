@@ -2,11 +2,33 @@ package entities;
 
 import java.util.ArrayList;
 
+/**
+ * Объект ж.б. элемента
+ */
 public class Structure {
+    /**
+     * Наименование
+     */
     private String title;
+    /**
+     * Список арматурных позиций
+     */
     private ArrayList<PositionBar> positions;
+    /**
+     * Список арматурных сеток по ГОСТ
+     */
     private ArrayList<RebarMesh> rebarMeshes;
+    /**
+     * Список арматурных пользовательских каркасов в данном ж.б. элементе.
+     */
+    private ArrayList<RebarCage> rebarCages;
+    /**
+     * Объем бетона
+     */
     private Double concreteVolume;
+    /**
+     * Наименование бетона
+     */
     private String concreteDefinition;
 
     public Structure() {
@@ -55,6 +77,14 @@ public class Structure {
 
     public void setConcreteDefinition(String concreteDefinition) {
         this.concreteDefinition = concreteDefinition;
+    }
+
+    public ArrayList<RebarCage> getRebarCages() {
+        return rebarCages;
+    }
+
+    public void setRebarCages(ArrayList<RebarCage> rebarCages) {
+        this.rebarCages = rebarCages;
     }
 
     @Override
