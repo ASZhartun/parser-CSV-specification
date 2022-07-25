@@ -2,35 +2,38 @@ package service;
 
 import config.EntityConfiguration;
 import config.ServiceConfiguration;
-import gui.TestSimpleGUI;
+
+import javafx.application.Application;
+import javafx.stage.Stage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import service.base.Operator;
+import service.extra.Librarian;
 
-public class Director {
+public class Director extends Application {
+    private Operator operator;
+    private Librarian librarian;
+
     public static void main(String[] args) {
-        final AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
-        context.register(EntityConfiguration.class, ServiceConfiguration.class);
-        context.refresh();
-        final Director director = (Director) context.getBean("director");
-        director.run();
-    }
 
-    private TestSimpleGUI gui;
+    }
 
     public Director() {
 
     }
 
-    public void run() {
-        gui.run();
-    }
+    @Override
+    public void start(Stage stage) throws Exception {
 
-    public TestSimpleGUI getGui() {
-        return gui;
     }
 
     @Autowired
-    public void setGui(TestSimpleGUI gui) {
-        this.gui = gui;
+    public void setOperator(Operator operator) {
+        this.operator = operator;
+    }
+
+    @Autowired
+    public void setLibrarian(Librarian librarian) {
+        this.librarian = librarian;
     }
 }
