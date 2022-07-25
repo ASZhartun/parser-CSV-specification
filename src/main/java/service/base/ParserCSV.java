@@ -394,7 +394,7 @@ public class ParserCSV {
      * @return объем бетона типа double
      */
     private Double extractDoubleValueOfConcreteVolumeFrom(String concreteValue) {
-        String pattern = "[0-9],[0-9]{1,2}";
+        String pattern = "[0-9]+,[0-9]{1,2}";
         final Pattern compile = Pattern.compile(pattern);
         final Matcher matcher = compile.matcher(concreteValue);
         if (matcher.find()) {

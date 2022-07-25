@@ -25,7 +25,7 @@ public class Librarian {
         ctx.register(ServiceConfiguration.class, EntityConfiguration.class);
         ctx.refresh();
         final Librarian librarian = (Librarian)ctx.getBean("librarian");
-        librarian.addNewRebarCageFrom("E:\\projects\\parser-CSV-specification\\src\\main\\resources\\lib\\Каркас КР1.csv");
+        librarian.addNewRebarCageFrom("E:\\projects\\parser-CSV-specification\\src\\main\\resources\\lib\\skeleton1.csv");
         System.out.println();
     }
     /**
