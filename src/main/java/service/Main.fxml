@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.net.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<?import javafx.scene.Group?>
+<Group fx:id="root" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" fx:controller="service.Director">
+    <Group fx:id="header">
+        <Label>
+            "Расчет спецификация 1.0"
+        </Label>
+    </Group>
+
+<!--    <Group fx:id="content">-->
+
+<!--    </Group>-->
+
+<!--    <Group fx:id="footer">-->
+
+<!--    </Group>-->
+</Group>
