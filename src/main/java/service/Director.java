@@ -3,16 +3,15 @@ package service;
 import config.EntityConfiguration;
 import config.ServiceConfiguration;
 
+import entities.RebarCage;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,6 +56,7 @@ public class Director extends Application {
 
     /**
      * Возвращает объект, содержащий весь контент окна приложения
+     *
      * @return GridPane
      */
     private GridPane getBody() {
@@ -84,6 +84,7 @@ public class Director extends Application {
 
     /**
      * Возвращает объект блока, содержащего вспомогательную информацию
+     *
      * @return HBox
      */
     private HBox getFooter() {
@@ -102,6 +103,7 @@ public class Director extends Application {
      *     <li>блок с расчетом спецификации</li>
      *     <li>блок с функционалом библиотекаря</li>
      * </ul>
+     *
      * @return GridPane
      */
     private GridPane getMainSection() {
@@ -126,6 +128,7 @@ public class Director extends Application {
 
     /**
      * Возвращает объект блока, содержащего блоки функционала библиотекаря.
+     *
      * @return GridPane
      */
     private GridPane createLibrarianBlock() {
@@ -136,7 +139,7 @@ public class Director extends Application {
         // заголовок библиотекаря
         HBox libreTitleBlock = getLibreTitleBlock();
         // таблица с дополнительными КЖ.И
-        TableView<String> viewRebarMeshes = getViewRebarMeshes();
+        TableView<RebarCage> viewRebarMeshes = getViewRebarMeshes();
         // блок с инструментами библиотекаря
         final GridPane librarianTools = new GridPane();
         // поле с кнопкой добавление новой КЖ.И
@@ -152,14 +155,32 @@ public class Director extends Application {
 
     /**
      * Возвращает объект блока, содержащего таблицу-отображение базы каркасов, хранимых библиотекарем
+     *
      * @return TableView
      */
-    private TableView<String> getViewRebarMeshes() {
-        final ObservableList<String> rebarMeshes = FXCollections.observableArrayList("Каркас КР1", "Каркас КР2");
-        final TableView<String> viewRebarMeshes = new TableView<>(rebarMeshes);
+    private TableView<RebarCage> getViewRebarMeshes() {
+        final ObservableList<RebarCage> rebarMeshes =
+                FXCollections.observableArrayList(librarian.getExtraUnitStorage().getExtraUnits());
+        final TableView<RebarCage> viewRebarMeshes = new TableView<>(rebarMeshes);
         viewRebarMeshes.prefHeight(300);
         viewRebarMeshes.prefWidth(300);
-        return null;
+
+        final TableColumn<RebarCage, String> nameColumn = new TableColumn<>("Name");
+        final TableColumn<RebarCage, Double> weightColumn = new TableColumn<>("Weight");
+        final TableColumn<RebarCage, String> docColumn = new TableColumn<>("doc");
+        try {
+            librarian.getExtraUnitStorage().getExtraUnits().forEach((cage) -> {
+                nameColumn.setCellValueFactory(new PropertyValueFactory<>(cage.getTitle()));
+                weightColumn.setCellValueFactory(new PropertyValueFactory<>(String.valueOf(cage.getUnitWeight())));
+                docColumn.setCellValueFactory(new PropertyValueFactory<>(cage.getDoc()));
+            });
+        } catch (NullPointerException e) {
+            System.out.println("Не удалось закинуть в таблицу хранилище библиотекаря из-за null");
+        } catch (Exception e) {
+            System.out.println("Ошибка с таблицей библиотекаря из-за хз чего");
+        }
+        viewRebarMeshes.getColumns().addAll(nameColumn, weightColumn, docColumn);
+        return viewRebarMeshes;
     }
 
     /**
@@ -169,6 +190,7 @@ public class Director extends Application {
      *     <li>кнопка для подтверждения изменения имени каркаса</li>
      *     <li>кнопка удаления каркаса из базы библиотекаря</li>
      * </ul>
+     *
      * @return HBox
      */
     private HBox getUpdatingRCPBlock() {
@@ -185,6 +207,7 @@ public class Director extends Application {
     /**
      * Возвращает объект блока интерфейса, содержащего блок с текстовым полем для пути добавляемого csv файла и кнопкой
      * "Добавить"
+     *
      * @return HBox
      */
     private HBox getAddingRCPBlock() {
@@ -199,6 +222,7 @@ public class Director extends Application {
 
     /**
      * Возвращает объект блока интерфейса, содержащего заголовок блока библиотекаря.
+     *
      * @return HBox
      */
     private HBox getLibreTitleBlock() {
@@ -211,6 +235,7 @@ public class Director extends Application {
 
     /**
      * Возвращает объект блока интерфейса, содержащего кнопку запуска расчета неполной спецификации.
+     *
      * @return HBox
      */
     private HBox getRunBLock() {
@@ -222,6 +247,7 @@ public class Director extends Application {
 
     /**
      * Возвращает объект блока интерфейса, содержащего поле с путем к csv файлу и кнопку выбора файла в ОС.
+     *
      * @return HBox
      */
     private HBox getChoseFileBlock() {
@@ -235,6 +261,7 @@ public class Director extends Application {
 
     /**
      * Возвращает объект блока интерфейса, содержащего заголовок программы.
+     *
      * @return HBox
      */
     private HBox getHeader() {
