@@ -24,10 +24,11 @@ public class Librarian {
         final AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext();
         ctx.register(ServiceConfiguration.class, EntityConfiguration.class);
         ctx.refresh();
-        final Librarian librarian = (Librarian)ctx.getBean("librarian");
+        final Librarian librarian = (Librarian) ctx.getBean("librarian");
         librarian.addNewRebarCageFrom("E:\\projects\\parser-CSV-specification\\src\\main\\resources\\lib\\skeleton1.csv");
         System.out.println();
     }
+
     /**
      * Модуль для чтения из csv файла
      */
@@ -74,7 +75,8 @@ public class Librarian {
     public ReaderCSVExtraUnit getReaderCSVExtraUnit() {
         return readerCSVExtraUnit;
     }
-@Autowired
+
+    @Autowired
     public void setReaderCSVExtraUnit(ReaderCSVExtraUnit readerCSVExtraUnit) {
         this.readerCSVExtraUnit = readerCSVExtraUnit;
     }
@@ -87,6 +89,7 @@ public class Librarian {
     public void setParserUnitCSV(ParserUnitCSV parserUnitCSV) {
         this.parserUnitCSV = parserUnitCSV;
     }
+
 
     public ExtraUnitStorage getExtraUnitStorage() {
         return extraUnitStorage;

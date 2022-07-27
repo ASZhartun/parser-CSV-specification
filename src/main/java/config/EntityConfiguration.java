@@ -47,4 +47,5 @@ public class EntityConfiguration {
     public ExtraUnitStorage getExtraUnitStorage() {
         return new ExtraUnitStorage();
     }
+
 }

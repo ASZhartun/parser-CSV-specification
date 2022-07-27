@@ -23,16 +23,18 @@ import service.base.Operator;
 import service.extra.Librarian;
 
 import java.io.File;
+import java.util.HashSet;
 
 public class Director extends Application {
     public static final String APP_TITLE = "Расчет спецификации 1.0";
     public static final int SMALL_GAP = 5;
 
     private Stage stageForAll;
-    private TableView<RebarCage> libreTable;
+    private final ObservableList<RebarCage> rebarMeshes = FXCollections.observableArrayList();
 
     private Operator operator;
     private Librarian librarian;
+    private TableView<RebarCage> libreTable;
 
     public static void main(String[] args) {
         launch(args);
@@ -167,31 +169,41 @@ public class Director extends Application {
      * @return TableView
      */
     private TableView<RebarCage> getViewRebarMeshes() {
-        final ObservableList<RebarCage> rebarMeshes =
-                FXCollections.observableArrayList(librarian.getExtraUnitStorage().getExtraUnits());
+        fillingEmpty();
+        rebarMeshes.addAll(librarian.getExtraUnitStorage().getExtraUnits());
         final TableView<RebarCage> viewRebarMeshes = new TableView<>(rebarMeshes);
+        viewRebarMeshes.setEditable(true);
         viewRebarMeshes.prefHeight(300);
         viewRebarMeshes.prefWidth(300);
 
         final TableColumn<RebarCage, String> nameColumn = new TableColumn<>("Name");
         final TableColumn<RebarCage, Double> weightColumn = new TableColumn<>("Weight");
 //        final TableColumn<RebarCage, String> docColumn = new TableColumn<>("doc");
-//        try {
-            librarian.getExtraUnitStorage().getExtraUnits().forEach((cage) -> {
-                nameColumn.setCellValueFactory(new PropertyValueFactory<>(cage.getTitle()));
-                weightColumn.setCellValueFactory(new PropertyValueFactory<>(String.valueOf(cage.getUnitWeight())));
+        try {
+            rebarMeshes.forEach((cage) -> {
+                nameColumn.setCellValueFactory(new PropertyValueFactory<>("title"));
+                weightColumn.setCellValueFactory(new PropertyValueFactory<>(String.valueOf("unitWeight")));
 //                docColumn.setCellValueFactory(new PropertyValueFactory<>(cage.getDoc()));
             });
-//        } catch (NullPointerException e) {
-//            System.out.println("Не удалось закинуть в таблицу хранилище библиотекаря из-за null");
-//        } catch (Exception e) {
-//            System.out.println("Ошибка с таблицей библиотекаря из-за хз чего");
-//        }
+        } catch (NullPointerException e) {
+            System.out.println("Не удалось закинуть в таблицу хранилище библиотекаря из-за null");
+        } catch (Exception e) {
+            System.out.println("Ошибка с таблицей библиотекаря из-за хз чего");
+        }
 //        viewRebarMeshes.getColumns().addAll(nameColumn, weightColumn, docColumn);
         viewRebarMeshes.getColumns().addAll(nameColumn, weightColumn);
         viewRebarMeshes.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
-        libreTable = viewRebarMeshes;
+        this.libreTable = viewRebarMeshes;
+
         return viewRebarMeshes;
+    }
+
+    private void fillingEmpty() {
+        final HashSet<RebarCage> extraUnits = librarian.getExtraUnitStorage().getExtraUnits();
+        final RebarCage rebarCage = new RebarCage();
+        rebarCage.setTitle("empty");
+        rebarCage.setUnitWeight(0d);
+        extraUnits.add(rebarCage);
     }
 
     /**
@@ -235,7 +247,7 @@ public class Director extends Application {
     private Button createRefreshingRCPButton() {
         final Button refreshRCPTable = new Button("Refresh");
         refreshRCPTable.setOnMouseReleased(event -> {
-            libreTable.refresh();
+
         });
         return refreshRCPTable;
     }
@@ -247,6 +259,9 @@ public class Director extends Application {
             final File file = fileChooser.showOpenDialog(stageForAll);
             if (file != null) {
                 librarian.addNewRebarCageFrom(file.getPath());
+//                rebarMeshes.addAll(librarian.getExtraUnitStorage().getExtraUnits()); !!!работает!!!
+                librarian.getExtraUnitStorage().getExtraUnits().stream().filter(item -> !rebarMeshes.contains(item)).forEach(rebarMeshes::add);
+
             }
         });
         return addRCP;
