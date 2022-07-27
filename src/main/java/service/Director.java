@@ -12,16 +12,25 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+
 import javafx.scene.layout.*;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import service.base.Operator;
 import service.extra.Librarian;
 
+import java.io.File;
+
 public class Director extends Application {
     public static final String APP_TITLE = "Расчет спецификации 1.0";
     public static final int SMALL_GAP = 5;
+
+    private Stage stageForAll;
+    private TableView<RebarCage> libreTable;
+
     private Operator operator;
     private Librarian librarian;
 
@@ -47,6 +56,7 @@ public class Director extends Application {
     @Override
     public void start(Stage stage) throws Exception {
         // содержимое окна программы
+        stageForAll = stage;
         final Scene scene = new Scene(getBody());
         stage.setScene(scene);
         stage.setTitle(APP_TITLE);
@@ -140,14 +150,12 @@ public class Director extends Application {
         HBox libreTitleBlock = getLibreTitleBlock();
         // таблица с дополнительными КЖ.И
         TableView<RebarCage> viewRebarMeshes = getViewRebarMeshes();
-        // блок с инструментами библиотекаря
-        final GridPane librarianTools = new GridPane();
         // поле с кнопкой добавление новой КЖ.И
         HBox addingRCPBlock = getAddingRCPBlock();
         // поле с кнопкой изменения имени выделенной в таблице КЖ.И, с кнопкой удаление выделенной в таблице КЖ.И
         HBox updatingRCPBlock = getUpdatingRCPBlock();
         librarianBlock.add(libreTitleBlock, 0, 0);
-//        librarianBlock.add(viewRebarMeshes, 0, 1);
+        librarianBlock.add(viewRebarMeshes, 0, 1);
         librarianBlock.add(addingRCPBlock, 0, 2);
         librarianBlock.add(updatingRCPBlock, 0, 3);
         return librarianBlock;
@@ -167,19 +175,22 @@ public class Director extends Application {
 
         final TableColumn<RebarCage, String> nameColumn = new TableColumn<>("Name");
         final TableColumn<RebarCage, Double> weightColumn = new TableColumn<>("Weight");
-        final TableColumn<RebarCage, String> docColumn = new TableColumn<>("doc");
-        try {
+//        final TableColumn<RebarCage, String> docColumn = new TableColumn<>("doc");
+//        try {
             librarian.getExtraUnitStorage().getExtraUnits().forEach((cage) -> {
                 nameColumn.setCellValueFactory(new PropertyValueFactory<>(cage.getTitle()));
                 weightColumn.setCellValueFactory(new PropertyValueFactory<>(String.valueOf(cage.getUnitWeight())));
-                docColumn.setCellValueFactory(new PropertyValueFactory<>(cage.getDoc()));
+//                docColumn.setCellValueFactory(new PropertyValueFactory<>(cage.getDoc()));
             });
-        } catch (NullPointerException e) {
-            System.out.println("Не удалось закинуть в таблицу хранилище библиотекаря из-за null");
-        } catch (Exception e) {
-            System.out.println("Ошибка с таблицей библиотекаря из-за хз чего");
-        }
-        viewRebarMeshes.getColumns().addAll(nameColumn, weightColumn, docColumn);
+//        } catch (NullPointerException e) {
+//            System.out.println("Не удалось закинуть в таблицу хранилище библиотекаря из-за null");
+//        } catch (Exception e) {
+//            System.out.println("Ошибка с таблицей библиотекаря из-за хз чего");
+//        }
+//        viewRebarMeshes.getColumns().addAll(nameColumn, weightColumn, docColumn);
+        viewRebarMeshes.getColumns().addAll(nameColumn, weightColumn);
+        viewRebarMeshes.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        libreTable = viewRebarMeshes;
         return viewRebarMeshes;
     }
 
@@ -212,12 +223,33 @@ public class Director extends Application {
      */
     private HBox getAddingRCPBlock() {
         final TextField newItem = new TextField();
-        final Button addRCP = new Button("Add RCP");
-        final HBox addingRCPBlock = new HBox(newItem, addRCP);
+        Button addRCP = createAddingRCPButton();
+        Button refreshRCPTable = createRefreshingRCPButton();
+        final HBox addingRCPBlock = new HBox(newItem, addRCP, refreshRCPTable);
         addingRCPBlock.setSpacing(SMALL_GAP);
         addingRCPBlock.setPadding(new Insets(SMALL_GAP, SMALL_GAP, SMALL_GAP, SMALL_GAP));
         addingRCPBlock.setAlignment(Pos.CENTER);
         return addingRCPBlock;
+    }
+
+    private Button createRefreshingRCPButton() {
+        final Button refreshRCPTable = new Button("Refresh");
+        refreshRCPTable.setOnMouseReleased(event -> {
+            libreTable.refresh();
+        });
+        return refreshRCPTable;
+    }
+
+    private Button createAddingRCPButton() {
+        final Button addRCP = new Button("Add RCP");
+        addRCP.setOnMouseReleased(event -> {
+            final FileChooser fileChooser = new FileChooser();
+            final File file = fileChooser.showOpenDialog(stageForAll);
+            if (file != null) {
+                librarian.addNewRebarCageFrom(file.getPath());
+            }
+        });
+        return addRCP;
     }
 
     /**
