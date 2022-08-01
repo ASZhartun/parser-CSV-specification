@@ -1,6 +1,6 @@
 package entities;
 
-import java.util.HashSet;
+import java.util.ArrayList;
 
 /**
  * Хранилище для пользовательских "Сборочных единиц".
@@ -9,7 +9,7 @@ public class ExtraUnitStorage {
     /**
      * Список объектов
      */
-    private HashSet<RebarCage> extraUnits = new HashSet<>();
+    private ArrayList<RebarCage> extraUnits = new ArrayList<>();
 
     public ExtraUnitStorage() {
 
@@ -24,11 +24,11 @@ public class ExtraUnitStorage {
         this.extraUnits.add(item);
     }
 
-    public HashSet<RebarCage> getExtraUnits() {
+    public ArrayList<RebarCage> getExtraUnits() {
         return extraUnits;
     }
 
-    public void setExtraUnits(HashSet<RebarCage> extraUnits) {
+    public void setExtraUnits(ArrayList<RebarCage> extraUnits) {
         this.extraUnits = extraUnits;
     }
 }

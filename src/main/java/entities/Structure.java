@@ -21,7 +21,7 @@ public class Structure {
     /**
      * Список арматурных пользовательских каркасов в данном ж.б. элементе.
      */
-    private ArrayList<RebarCage> rebarCages;
+    private ArrayList<RebarCage> rebarCages = new ArrayList<>();
     /**
      * Объем бетона
      */

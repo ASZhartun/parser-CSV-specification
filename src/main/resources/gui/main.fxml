@@ -5,7 +5,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<VBox alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="service.Director">
+<VBox alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.MainGUIController">
     <children>
         <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Расчет спецификации 1.0" textAlignment="CENTER">
             <font>
@@ -17,14 +17,14 @@
         </Text>
         <VBox alignment="CENTER">
             <children>
-                <Label text="путь к файлу">
+                <Label fx:id="filepath" text="путь к файлу">
                     <font>
                         <Font name="ISOCTEUR" size="18.0" />
                     </font>
                 </Label>
                 <HBox alignment="CENTER" prefWidth="200.0">
                     <children>
-                        <Button mnemonicParsing="false" text="Файл">
+                        <Button fx:id="fileButton" mnemonicParsing="false" onAction="#chooseSpec" text="Файл">
                             <HBox.margin>
                                 <Insets left="25.0" />
                             </HBox.margin>
@@ -32,7 +32,7 @@
                                 <Font name="ISOCTEUR" size="14.0" />
                             </font>
                         </Button>
-                        <Button mnemonicParsing="false" text="Расчет">
+                        <Button fx:id="calculation" mnemonicParsing="false" onAction="#calculateSpec" text="Расчет">
                             <HBox.margin>
                                 <Insets left="25.0" />
                             </HBox.margin>
@@ -40,7 +40,7 @@
                                 <Font name="ISOCTEUR" size="14.0" />
                             </font>
                         </Button>
-                        <Button mnemonicParsing="false" text="Результаты">
+                        <Button fx:id="resumes" mnemonicParsing="false" onAction="#showResultFiles" text="Результаты">
                             <font>
                                 <Font name="ISOCTEUR" size="14.0" />
                             </font>
@@ -76,19 +76,19 @@
                         <Insets top="15.0" />
                     </VBox.margin>
                 </Text>
-                <TreeTableView fx:id="lib_storage_table">
+                <TableView fx:id="tableRPC" prefHeight="200.0" prefWidth="200.0">
                     <columns>
-                        <TreeTableColumn fx:id="lib_storage_table_names" minWidth="25.0" prefWidth="75.0" text="Имя КЖ.И" />
-                        <TreeTableColumn prefWidth="75.0" text="Масса КЖ.И" />
-                        <TreeTableColumn prefWidth="75.0" text="Путь" />
+                        <TableColumn fx:id="name" prefWidth="75.0" text="Имя" />
+                        <TableColumn fx:id="weight" prefWidth="75.0" text="Масса" />
+                        <TableColumn maxWidth="250.0" minWidth="150.0" prefWidth="75.0" text="Путь" />
                     </columns>
                     <columnResizePolicy>
-                        <TreeTableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                        <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                     </columnResizePolicy>
                     <VBox.margin>
-                        <Insets bottom="25.0" left="25.0" right="25.0" top="25.0" />
+                        <Insets bottom="15.0" left="30.0" right="30.0" top="15.0" />
                     </VBox.margin>
-                </TreeTableView>
+                </TableView>
                 <HBox fx:id="lib_storage_actions" alignment="CENTER">
                     <children>
                         <Button fx:id="addRPCButton" mnemonicParsing="false" onAction="#addRPC" text="Добавить КЖ.И">
@@ -107,6 +107,7 @@
                                 <Font name="ISOCTEUR" size="14.0" />
                             </font>
                         </Button>
+                  <Button fx:id="generator" mnemonicParsing="false" onAction="#addZalupa" text="Generator" />
                     </children>
                     <padding>
                         <Insets bottom="25.0" left="25.0" right="25.0" top="5.0" />

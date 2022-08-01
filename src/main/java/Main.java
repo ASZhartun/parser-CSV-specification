@@ -1,17 +1,25 @@
-import config.EntityConfiguration;
-import config.ServiceConfiguration;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import service.base.Operator;
+import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
 
-public class Main {
+
+import java.net.URL;
+
+public class Main extends Application {
+
+    @Override
+    public void start(Stage stage) throws Exception {
+        FXMLLoader loader = new FXMLLoader();
+        URL xmlUrl = getClass().getResource("/gui/main.fxml");
+        loader.setLocation(xmlUrl);
+        Parent root = loader.load();
+        stage.setScene(new Scene(root));
+        stage.show();
+    }
+
     public static void main(String[] args) {
-        final AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
-        context.register(EntityConfiguration.class);
-        context.register(ServiceConfiguration.class);
-        context.refresh();
-        final Operator operator = (Operator) context.getBean("operator");
-//        String path = "E:\\projects\\parser-CSV-specification\\src\\main\\resources\\table.csv";
-//        operator.doWork(path);
-        operator.doWork(args[0]);
+        launch(args);
     }
 }
