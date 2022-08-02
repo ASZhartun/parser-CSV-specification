@@ -1,6 +1,7 @@
 package service.base;
 
 import entities.PositionBar;
+import entities.RebarCage;
 import entities.RebarMesh;
 import entities.Structure;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,9 +47,35 @@ public class Calculator {
     private void completeStructures() {
         for (Structure structure :
                 structures) {
-            competeRebarMeshesWeights(structure.getRebarMeshes());
+            completeRebarMeshesWeights(structure.getRebarMeshes());
             completePositionWeights(structure.getPositions());
+            completeRebarCagesWeights(structure.getRebarCages());
         }
+    }
+
+    /**
+     * ќбрезает массу каркаса до 2х знаков после зап€той.
+     *
+     * @param rebarCages арматурный каркас
+     */
+    private void completeRebarCagesWeights(ArrayList<RebarCage> rebarCages) {
+        final ArrayList<RebarCage> customRebarCages = new ArrayList<>();
+        rebarCages.forEach(item -> {
+            item.getBars().forEach(positionBar -> {
+                try {
+                    positionBar.setWeight(Double.parseDouble(decimalFormat.format(positionBar.getWeight()).replaceAll(",", ".")));
+                } catch (NumberFormatException e) {
+                    System.out.println("ѕроеб с конвертацией после усечение массы до двух знаков, жмых");
+                }
+            });
+            item.refresh();
+
+            rebarCages.forEach(rebarCage -> {
+                rebarCage.getBars().forEach((positionBar -> {
+                    positionBar.setQuantity(positionBar.getQuantity() * rebarCage.getQuantity());
+                }));
+            });
+        });
     }
 
     /**
@@ -56,11 +83,13 @@ public class Calculator {
      *
      * @param rebarMeshes список арматурных сеток структуры дл€ обсчета
      */
-    private void competeRebarMeshesWeights(ArrayList<RebarMesh> rebarMeshes) {
+    private void completeRebarMeshesWeights(ArrayList<RebarMesh> rebarMeshes) {
         for (RebarMesh rebarMesh :
                 rebarMeshes) {
             calculateWeight(rebarMesh.getBase());
+//            rebarMesh.getBase().setQuantity(rebarMesh.getBase().getQuantity() * rebarMesh.getQuantity());
             calculateWeight(rebarMesh.getCross());
+//            rebarMesh.getCross().setQuantity(rebarMesh.getCross().getQuantity() * rebarMesh.getQuantity());
         }
     }
 

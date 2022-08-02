@@ -4,7 +4,7 @@ import service.base.Calculator;
 
 import java.util.stream.Stream;
 
-public class PositionBar {
+public class PositionBar implements Cloneable{
     String rebarType;
     int diameter;
     int length;
@@ -85,6 +85,16 @@ public class PositionBar {
                 item.getDiameter() == diameter
         ).findFirst().orElse(RebarWeightGOST.D0);
         weight = length * rebarWeightGOST.getMeterWeight()/1000;
+    }
+
+    @Override
+    public PositionBar clone() {
+        try {
+            PositionBar clone = (PositionBar) super.clone();
+            return clone;
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError();
+        }
     }
 
     private enum RebarWeightGOST {

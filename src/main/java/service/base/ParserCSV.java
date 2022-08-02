@@ -89,7 +89,7 @@ public class ParserCSV {
      * @return список частных таблиц
      */
     private ArrayList<BlockTable> getBlockStructureListFromCommonTable(BlockTable blockTable) {
-        final ArrayList<BlockTable> blockTables = new ArrayList<>();
+        final ArrayList<BlockTable> tables = new ArrayList<>();
         int upBorderIndex = 0;
         int downBorderIndex;
         final ArrayList<Line> commonLines = blockTable.getLines();
@@ -104,12 +104,12 @@ public class ParserCSV {
                                             .subList(upBorderIndex, downBorderIndex + 1)
                             )
                     );
-                    blockTables.add(temp);
+                    tables.add(temp);
                     upBorderIndex = commonLines.indexOf(line);
                 }
             }
         }
-        return blockTables;
+        return tables;
 
     }
 
@@ -172,7 +172,7 @@ public class ParserCSV {
         return !line.getName().equals("Материалы") &&
                 !line.getName().equals("Сборочные единицы") &&
                 !line.getName().equals("Детали") &&
-        !line.getName().equals("Изделия закладные") &&
+                !line.getName().equals("Изделия закладные") &&
                 !line.getName().equals("Сетки");
     }
 
@@ -220,15 +220,14 @@ public class ParserCSV {
      * @param block блок, описывающий структуру
      * @return массив строк, описывающий бетон
      */
-    private String parseBlockConcreteDefinition(BlockTable block) {
-        String definition = "";
+    private ArrayList<String> parseBlockConcreteDefinition(BlockTable block) {
+        final ArrayList<String> concreteDefinedLines = new ArrayList<>();
         int indexConcrete = getIndexOfMaterialsPart(block) + 1;
         final ArrayList<Line> lines = block.getLines();
-        if (!lines.get(indexConcrete).getName().equals(" ")) {
-            definition = (lines.get(indexConcrete).getName());
-
+        for (int i = indexConcrete; i < lines.size(); i++) {
+            concreteDefinedLines.add(lines.get(i).toString());
         }
-        return definition;
+        return concreteDefinedLines;
     }
 
     /**
@@ -244,28 +243,33 @@ public class ParserCSV {
         final ArrayList<RebarMesh> rebarMeshes = new ArrayList<>();
         final int downEdgeOfPositions = getIndexOfMaterialsPart(block);
         final ArrayList<Line> lines = block.getLines();
-        for (int i = 1; i < downEdgeOfPositions; i++) {
+        for (int i = 0; i < downEdgeOfPositions; i++) {
             final Line line = lines.get(i);
             if (line.getDescription().equals("ГОСТ 23279-2012")) {
                 final RebarMesh rebarMesh = rebarMeshParser.build(line.getName(), line.getQuantity());
-                rebarMeshes.add(rebarMesh);
+                structure.getRebarMeshes().add(rebarMesh);
             } else if (existsAtLibrary(line.getName())) {
                 final RebarCage item = librarian.getItemBy(line.getName());
-                item.setQuantity(Integer.parseInt(line.getQuantity()));
-                item.setDoc(line.getDescription());
-                structure.getRebarCages().add(item);
-            }
-            else if (isPosition(line.getName())) {
+                RebarCage instance = new RebarCage();
+                try {
+                    instance = item.clone();
+                } catch (CloneNotSupportedException e) {
+                    e.printStackTrace();
+                }
+                instance.setQuantity(Integer.parseInt(line.getQuantity()));
+                instance.setDoc(line.getDescription());
+                structure.getRebarCages().add(instance);
+            } else if (isPosition(line.getName())) {
                 final PositionBar temp = parsePositionBar(line);
-                positionBars.add(temp);
+                structure.getPositions().add(temp);
             }
         }
-        structure.setPositions(positionBars);
-        structure.setRebarMeshes(rebarMeshes);
+        System.out.println();
     }
 
     /**
      * Проверяет существование пользовательского каркаса в библиотеке по указнному имени
+     *
      * @param name имя каркаса
      * @return true/false
      */
@@ -426,6 +430,9 @@ public class ParserCSV {
      * @return последнее слово из наименования
      */
     private String parseBlockTitle(BlockTable block) {
+        if (!block.getLines().get(0).getPos().equals(" ")) {
+            return " ";
+        }
         if (block.getLines().get(0).getName().indexOf("\"") == 0) {
             block.getLines().get(0).setName(block.getLines().get(0).getName().substring(1,
                     block.getLines().get(0).getName().length() - 1));

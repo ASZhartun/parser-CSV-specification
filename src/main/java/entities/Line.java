@@ -78,11 +78,11 @@ public class Line {
 
     @Override
     public String toString() {
-        return getPos() + '\t'
-                + getDescription() + '\t'
-                + getName() + '\t'
-                + getQuantity() + '\t'
-                + getWeight() + '\t'
-                + getNote() + '\n';
+        return getPos() + ';'
+                + getDescription() + ';'
+                + getName() + ';'
+                + getQuantity() + ';'
+                + getWeight() + ';'
+                + getNote() + ';' + '\n';
     }
 }

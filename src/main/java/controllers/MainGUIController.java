@@ -1,12 +1,10 @@
 package controllers;
 
-import com.sun.glass.ui.CommonDialogs;
-import com.sun.javafx.collections.ObservableListWrapper;
+
 import config.EntityConfiguration;
 import config.ServiceConfiguration;
 import entities.RebarCage;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -17,8 +15,7 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import service.Director;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.HashSet;
+
 import java.util.Random;
 
 public class MainGUIController {

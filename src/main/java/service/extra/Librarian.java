@@ -60,12 +60,13 @@ public class Librarian {
      * @return объект RebarCage
      */
     public RebarCage getItemBy(String title) {
-        return extraUnitStorage
+        final RebarCage rebarCage = extraUnitStorage
                 .getExtraUnits()
                 .stream()
                 .filter((item) -> item.getTitle().equals(title))
                 .findFirst()
                 .orElseGet(RebarCage::new);
+        return rebarCage;
     }
 
     public Librarian() {

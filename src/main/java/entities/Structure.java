@@ -13,11 +13,11 @@ public class Structure {
     /**
      * Список арматурных позиций
      */
-    private ArrayList<PositionBar> positions;
+    private ArrayList<PositionBar> positions = new ArrayList<>();
     /**
      * Список арматурных сеток по ГОСТ
      */
-    private ArrayList<RebarMesh> rebarMeshes;
+    private ArrayList<RebarMesh> rebarMeshes = new ArrayList<>();
     /**
      * Список арматурных пользовательских каркасов в данном ж.б. элементе.
      */
@@ -29,7 +29,7 @@ public class Structure {
     /**
      * Наименование бетона
      */
-    private String concreteDefinition;
+    private ArrayList<String> concreteDefinition = new ArrayList<>();
 
     public Structure() {
 
@@ -71,11 +71,11 @@ public class Structure {
         this.rebarMeshes = rebarMeshes;
     }
 
-    public String getConcreteDefinition() {
+    public ArrayList<String> getConcreteDefinition() {
         return concreteDefinition;
     }
 
-    public void setConcreteDefinition(String concreteDefinition) {
+    public void setConcreteDefinition(ArrayList<String> concreteDefinition) {
         this.concreteDefinition = concreteDefinition;
     }
 

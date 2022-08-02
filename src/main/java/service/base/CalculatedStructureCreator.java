@@ -39,16 +39,27 @@ public class CalculatedStructureCreator {
      */
     private CalculatedStructure calculate(Structure structure) {
         final CalculatedStructure calculatedStructure = new CalculatedStructure();
+        final ArrayList<TypeBarBlock> typeBarBlocks = createTypeBarBlockFrom(structure);
+        calculatedStructure.setTypeBarBlocks(typeBarBlocks);
+        calculatedStructure.setTitle(structure.getTitle());
+        calculatedStructure.calculateTotalWeight();
+        return calculatedStructure;
+    }
+
+    /**
+     * Создает список блоков с определенными типами арматуры (S240,S500, etc.)
+     *
+     * @param structure данная структура
+     * @return список объектов блоков, с указанными типами арматуры
+     */
+    public ArrayList<TypeBarBlock> createTypeBarBlockFrom(Structure structure) {
         final ArrayList<TypeBarBlock> typeBarBlocks = new ArrayList<>();
         final ArrayList<String> types = new ArrayList<>(createListOfBarTypes(structure));
         for (String type :
                 types) {
             typeBarBlocks.add(createTypeBarBlockBy(type, structure));
         }
-        calculatedStructure.setTypeBarBlocks(typeBarBlocks);
-        calculatedStructure.setTitle(structure.getTitle());
-        calculatedStructure.calculateTotalWeight();
-        return calculatedStructure;
+        return typeBarBlocks;
     }
 
     /**
@@ -114,6 +125,10 @@ public class CalculatedStructureCreator {
                 structure.getRebarMeshes()) {
             positionBars.add(rebarMesh.getBase());
             positionBars.add(rebarMesh.getCross());
+        }
+
+        for (RebarCage rebarCage : structure.getRebarCages()) {
+            positionBars.addAll(rebarCage.getBars());
         }
         positionBars.addAll(structure.getPositions());
         return positionBars;

@@ -2,6 +2,7 @@ package service.base;
 
 import dao.ReaderCSV;
 import entities.PositionBar;
+import entities.RebarCage;
 import entities.RebarMesh;
 import entities.Structure;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +40,8 @@ public class SpecPrinter {
      */
     public String build(ArrayList<Structure> structures) {
         StringBuilder spec = new StringBuilder();
-        spec.append(makeSpecHeader());
+//        spec.append(makeSpecHeader());
+        spec.append("Поз.;Обозначение;Наименование;Кол-во;Масса ед.,кг;Примечание;\n");
         for (Structure structure :
                 structures) {
             spec.append(getBodyTableFrom(structure));
@@ -55,11 +57,37 @@ public class SpecPrinter {
      */
     private String getBodyTableFrom(Structure structure) {
         final StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append(createStructureTitle(structure)); //done
+//        stringBuilder.append(createStructureTitle(structure)); done
+        stringBuilder.append(" ; ;"+structure.getTitle() + "; ; ; ;\n");
         stringBuilder.append(createStructureRebarMeshesTablePart(structure)); //done
+        stringBuilder.append(createStructureRebarCagesTablePart(structure));
         stringBuilder.append(createPositionBarsTablePart(structure)); //done
         stringBuilder.append(createConcreteTablePart(structure)); //done
         return stringBuilder.toString();
+    }
+
+    private String createStructureRebarCagesTablePart(Structure structure) {
+        final StringBuilder lines = new StringBuilder();
+        final ArrayList<RebarCage> rebarCages = structure.getRebarCages();
+        for (RebarCage rebarCage :
+                rebarCages) {
+            lines.append(createRebarCageSignature(rebarCage));
+        }
+        return lines.toString();
+    }
+
+    private String createRebarCageSignature(RebarCage rebarCage) {
+        final StringBuilder line = new StringBuilder(" ");
+        line.append(" ;")
+                .append(rebarCage.getDoc())
+                .append(";")
+                .append(rebarCage.getTitle())
+                .append(";")
+                .append(rebarCage.getQuantity())
+                .append(";=")
+                .append(String.format("%2f", rebarCage.getUnitWeight()))
+                .append(" ;\n");
+        return line.toString();
     }
 
     /**
@@ -69,9 +97,11 @@ public class SpecPrinter {
      * @return табличный блок в виде строки.
      */
     private String createConcreteTablePart(Structure structure) {
+        final ArrayList<String> concreteDefinition = structure.getConcreteDefinition();
         final StringBuilder materials = new StringBuilder();
-        materials.append(createTitleMaterialsBlock());
-        materials.append(createConcreteContent(structure));
+        materials.append(" ; ;Материалы; ; ; ;\n");
+        concreteDefinition.forEach(materials::append);
+        materials.append(" ; ; ; ; ; ;\n");
         return materials.toString();
     }
 
@@ -169,7 +199,8 @@ public class SpecPrinter {
      */
     private String createStructureRebarMeshesTablePart(Structure structure) {
         final StringBuilder part = new StringBuilder();
-        part.append(createTitleRebarBlock());
+        part.append(" ; ;Сборочные единицы; ; ; ;\n");
+//        part.append(createTitleRebarBlock());
         part.append(createRebarMeshesLines(structure.getRebarMeshes()));
         return part.toString();
     }
@@ -186,6 +217,7 @@ public class SpecPrinter {
                 rebarMeshes) {
             lines.append(createRebarMeshSignature(rebarMesh));
         }
+//        lines.append('\n');
         return lines.toString();
     }
 
@@ -229,7 +261,7 @@ public class SpecPrinter {
                 ";" +
                 structure.getTitle() +
                 ";" + ";" +
-                ";\n";
+                ";";
     }
 
     private Boolean checkRebarMeshesExisting(Structure structure) {

@@ -6,7 +6,7 @@ import java.util.Objects;
 /**
  * Универсальный объект хранения пространственного каркаса из арматурных стержней.
  */
-public class RebarCage {
+public class RebarCage implements Cloneable {
     /**
      * Список стержневых позиций
      */
@@ -34,6 +34,7 @@ public class RebarCage {
 
     /**
      * Подсчет веса единицы
+     *
      * @param bars список стержневых позиций, входящих в каркас.
      * @return суммарный вес
      */
@@ -97,5 +98,19 @@ public class RebarCage {
     @Override
     public int hashCode() {
         return Objects.hash(title);
+    }
+
+    @Override
+    public RebarCage clone() throws CloneNotSupportedException {
+        RebarCage copy = (RebarCage) super.clone();
+        if (bars != null) {
+            copy.setBars(new ArrayList<>());
+            for (PositionBar positionBar :
+                    bars) {
+                final PositionBar cloneBar = positionBar.clone();
+                copy.getBars().add(cloneBar);
+            }
+        }
+        return copy;
     }
 }
