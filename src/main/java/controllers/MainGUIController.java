@@ -7,6 +7,8 @@ import entities.RebarCage;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.FileChooser;
 import javafx.stage.Window;
@@ -14,8 +16,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import service.Director;
 
+import java.awt.*;
 import java.io.File;
 
+import java.io.IOException;
 import java.util.Random;
 
 public class MainGUIController {
@@ -62,6 +66,8 @@ public class MainGUIController {
         this.tableRPC.setItems(FXCollections.observableList(director.getLibrarian().getExtraUnitStorage().getExtraUnits()));
         this.tableRPC.getSelectionModel();
 
+        resumes.setDisable(true);
+
         System.out.println("initialize of controller");
     }
 
@@ -92,18 +98,24 @@ public class MainGUIController {
     public void calculateSpec() {
         final String filepath = this.filepath.getText();
         director.getOperator().doWork(filepath);
+        resumes.setDisable(false);
     }
 
     @FXML
     public void showResultFiles() {
-        final Window window = resumes.getScene().getWindow();
-        final FileChooser fileChooser = new FileChooser();
-        fileChooser.setInitialDirectory(new File(director.getOperator().getReaderCSV().getPathFolder()));
-        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("CSV", "*.csv"));
-        fileChooser.setTitle("Результаты расчета");
-        if (window != null) {
-            final File file = fileChooser.showOpenDialog(window);
+//        final Window window = resumes.getScene().getWindow();
+        try {
+            Desktop.getDesktop().open(new File(director.getOperator().getReaderCSV().getPathFolder()));
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+//        final FileChooser fileChooser = new FileChooser();
+//        fileChooser.setInitialDirectory(new File(director.getOperator().getReaderCSV().getPathFolder()));
+//        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("CSV", "*.csv"));
+//        fileChooser.setTitle("Результаты расчета");
+//        if (window != null) {
+//            final File file = fileChooser.showOpenDialog(window);
+//        }
     }
 
     @FXML
@@ -113,7 +125,11 @@ public class MainGUIController {
         fileChooser.setTitle("Выберите csv файл со спецификацией");
         if (window != null) {
             final File file = fileChooser.showOpenDialog(window);
-            director.getLibrarian().addNewRebarCageFrom(file.getPath());
+            try {
+                director.getLibrarian().addNewRebarCageFrom(file.getPath());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             addRPCButton.setText("Ладное");
             this.tableRPC.refresh();
         } else {
@@ -133,14 +149,17 @@ public class MainGUIController {
     public RebarCage getRebarCage() {
         final Random random = new Random();
         final RebarCage rebarCage = new RebarCage();
-        rebarCage.setTitle("Zalupa" + random.nextInt(0, 10) * 10);
+        rebarCage.setTitle("Удали меня");
         return rebarCage;
     }
 
     @FXML
     public void addZalupa() {
         generator.setOnMouseReleased(event -> {
-            this.tableRPC.getItems().add(getRebarCage());
+            final RebarCage rebarCage = getRebarCage();
+            this.tableRPC.getItems().add(rebarCage);
+            this.tableRPC.getItems().remove(rebarCage);
+            this.tableRPC.refresh();
         });
     }
 

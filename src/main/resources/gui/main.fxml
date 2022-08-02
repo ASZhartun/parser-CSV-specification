@@ -91,27 +91,30 @@
                 </TableView>
                 <HBox fx:id="lib_storage_actions" alignment="CENTER">
                     <children>
-                        <Button fx:id="addRPCButton" mnemonicParsing="false" onAction="#addRPC" text="Добавить КЖ.И">
+                        <Button fx:id="addRPCButton" mnemonicParsing="false" onAction="#addRPC" text="Добавить КЖ.И" textAlignment="CENTER">
                             <HBox.margin>
-                                <Insets left="25.0" right="25.0" />
+                                <Insets />
                             </HBox.margin>
                             <font>
                                 <Font name="ISOCTEUR" size="14.0" />
                             </font>
                         </Button>
-                        <Button fx:id="deleteRPCButton" mnemonicParsing="false" onAction="#deleteRPC" text="Удалить КЖ.И">
+                        <Button fx:id="deleteRPCButton" mnemonicParsing="false" onAction="#deleteRPC" text="Удалить КЖ.И" textAlignment="CENTER">
                             <HBox.margin>
-                                <Insets left="25.0" right="25.0" />
+                                <Insets left="20.0" right="20.0" />
                             </HBox.margin>
                             <font>
                                 <Font name="ISOCTEUR" size="14.0" />
                             </font>
                         </Button>
-                  <Button fx:id="generator" mnemonicParsing="false" onAction="#addZalupa" text="Generator" />
+                  <Button fx:id="generator" mnemonicParsing="false" onAction="#addZalupa" text="Обновить" textAlignment="CENTER">
+                     <font>
+                        <Font name="ISOCTEUR" size="14.0" />
+                     </font></Button>
                     </children>
-                    <padding>
-                        <Insets bottom="25.0" left="25.0" right="25.0" top="5.0" />
-                    </padding>
+               <VBox.margin>
+                  <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+               </VBox.margin>
                 </HBox>
             </children>
         </VBox>
