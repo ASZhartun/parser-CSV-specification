@@ -25,7 +25,8 @@
 <h2>Как запустить</h2>
 <ol>
 <li>выполнить package</li>
-<li>поместить table.csv в каталог с package.jar</li>
-<li>в cmd выполнить команду <code>java -jar <i>package</i>.jar "абсолютный путь к \table.csv"</code>.</li>
+<li>в cmd выполнить команду <p><code>java --module-path %JAVA_FX% --add-module javafx.controls,javafx.fxml -jar 
+<i>package</i>.
+jar</code></p></li>
 </ol>
 <p><i>Например,</i><code>java -jar parser-CSV-specification.jar "D:\parser\table.csv"</code></p>

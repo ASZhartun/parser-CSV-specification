@@ -87,7 +87,7 @@ public class MainGUIController {
         if (window != null) {
             final File file = fileChooser.showOpenDialog(window);
             filepath.setText(file.getPath());
-            fileButton.setText("Ладное");
+//            fileButton.setText("Ладное");
             this.tableRPC.refresh();
         } else {
             fileButton.setText("Неладное");
@@ -130,7 +130,7 @@ public class MainGUIController {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            addRPCButton.setText("Ладное");
+//            addRPCButton.setText("Ладное");
             this.tableRPC.refresh();
         } else {
             addRPCButton.setText("Неладное");
