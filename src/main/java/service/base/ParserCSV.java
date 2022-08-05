@@ -31,7 +31,7 @@ public class ParserCSV {
      *     <li><pre>8    S240   СТБ1704-2012, L=350</pre></li>
      * </ul>
      */
-    private static final String REGEX_POSITION_NAME_WITH_LENGTH = "[0-9]{1,2}[ ]+[S,A,А][0-9]{3}[ ]+СТБ[ ]?1704-2012,[ ]?[L][=][0-9]+";
+    private static final String REGEX_POSITION_NAME_WITH_LENGTH = "[0-9]{1,2}[ ]+[S,A,А][0-9]{3}[ ]+СТБ[ ]?1704-2012,[ ]?[L](.+)?[=][0-9]+";
 
 
     public ParserCSV() {
@@ -316,7 +316,9 @@ public class ParserCSV {
      * @param line        строка, содержащая данные по позиции
      */
     private void setDiameterAndTypeAndLengthTo(PositionBar positionBar, Line line) {
-        final String[] split = line.getName().split("[ ]+");
+        String name = line.getName();
+        name = name.trim();
+        final String[] split = name.split("[ ]+");
         positionBar.setDiameter(extractDiameter(split[0]));
         positionBar.setRebarType(split[1]);
         positionBar.setLength(extractLengthFrom(split[4]));
@@ -376,7 +378,10 @@ public class ParserCSV {
     private boolean isPosition(String name) {
         final Pattern compile = Pattern.compile(REGEX_POSITION_NAME_WITH_LENGTH);
         final Matcher matcher = compile.matcher(name);
-        return matcher.matches();
+        if (matcher.find()) {
+            return true;
+        }
+        return false;
     }
 
     /**
